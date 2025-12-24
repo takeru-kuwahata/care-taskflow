@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>医療的ケア児支援課題管理システム - デザインテーマ選択</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .header p {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    .theme-tabs {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .theme-tab {
+      padding: 14px 32px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .theme-tab:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .theme-tab.active {
+      background: white;
+      color: #667eea;
+      border-color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .theme-content {
+      display: none;
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      animation: fadeIn 0.5s ease;
+    }
+
+    .theme-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .theme-description {
+      margin-bottom: 24px;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+    }
+
+    .theme-description h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #1a1a1a;
+    }
+
+    .theme-description p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* Theme 1: Modern Professional */
+    .theme-modern {
+      --primary: #3B82F6;
+      --secondary: #64748B;
+      --background: #F8FAFC;
+      --surface: #FFFFFF;
+      --text-primary: #1E293B;
+      --text-secondary: #64748B;
+      --border: #E2E8F0;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+    }
+
+    .theme-modern .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .theme-modern .app-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .theme-modern .toolbar {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .theme-modern .filter-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .theme-modern select {
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text-primary);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .theme-modern select:hover {
+      border-color: var(--primary);
+    }
+
+    .theme-modern .btn-primary {
+      padding: 10px 24px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .theme-modern .btn-primary:hover {
+      background: #2563EB;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .theme-modern .task-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .theme-modern .task-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .theme-modern .task-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 4px 16px rgba(59, 130, 246, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .theme-modern .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .theme-modern .task-number {
+      background: var(--background);
+      color: var(--text-secondary);
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .theme-modern .task-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .theme-modern .task-problem {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .theme-modern .task-meta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .theme-modern .badge {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .theme-modern .badge-status-notstarted {
+      background: #F1F5F9;
+      color: var(--text-secondary);
+    }
+
+    .theme-modern .badge-status-inprogress {
+      background: #DBEAFE;
+      color: var(--primary);
+    }
+
+    .theme-modern .badge-status-completed {
+      background: #D1FAE5;
+      color: var(--success);
+    }
+
+    .theme-modern .task-deadline {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .theme-modern .task-assignee {
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    /* Theme 2: Clean Minimal */
+    .theme-minimal {
+      --primary: #000000;
+      --secondary: #6B7280;
+      --background: #FFFFFF;
+      --surface: #FAFAFA;
+      --text-primary: #111827;
+      --text-secondary: #6B7280;
+      --border: #E5E7EB;
+    }
+
+    .theme-minimal .app-header {
+      padding: 32px 0;
+      border-bottom: 2px solid var(--primary);
+      margin-bottom: 32px;
+    }
+
+    .theme-minimal .app-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+    }
+
+    .theme-minimal .toolbar {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .theme-minimal .filter-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .theme-minimal select {
+      padding: 8px 12px;
+      border: none;
+      border-bottom: 2px solid var(--border);
+      background: transparent;
+      color: var(--text-primary);
+      font-size: 14px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .theme-minimal select:focus {
+      outline: none;
+      border-bottom-color: var(--primary);
+    }
+
+    .theme-minimal .btn-primary {
+      padding: 12px 32px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+    }
+
+    .theme-minimal .btn-primary:hover {
+      background: #1F2937;
+    }
+
+    .theme-minimal table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    .theme-minimal th {
+      text-align: left;
+      padding: 16px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .theme-minimal td {
+      padding: 20px 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+
+    .theme-minimal tr {
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+
+    .theme-minimal tbody tr:hover {
+      background: var(--surface);
+    }
+
+    .theme-minimal .task-number {
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .theme-minimal .badge {
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .theme-minimal .badge-status-notstarted {
+      background: #F3F4F6;
+      color: #6B7280;
+    }
+
+    .theme-minimal .badge-status-inprogress {
+      background: #000000;
+      color: white;
+    }
+
+    .theme-minimal .badge-status-completed {
+      background: #E5E7EB;
+      color: #374151;
+    }
+
+    /* Theme 3: Warm Healthcare */
+    .theme-healthcare {
+      --primary: #059669;
+      --secondary: #D97706;
+      --background: #FFFBEB;
+      --surface: #FFFFFF;
+      --text-primary: #1F2937;
+      --text-secondary: #78716C;
+      --border: #E7E5E4;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #DC2626;
+    }
+
+    .theme-healthcare .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px;
+      background: linear-gradient(135deg, #ECFDF5 0%, #FEF3C7 100%);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+
+    .theme-healthcare .app-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .theme-healthcare .toolbar {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding: 16px;
+      background: var(--background);
+      border-radius: 12px;
+      flex-wrap: wrap;
+    }
+
+    .theme-healthcare select {
+      padding: 10px 16px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--text-primary);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .theme-healthcare select:hover {
+      border-color: var(--primary);
+    }
+
+    .theme-healthcare .btn-primary {
+      padding: 10px 24px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .theme-healthcare .btn-primary:hover {
+      background: #047857;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+    }
+
+    .theme-healthcare .task-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .theme-healthcare .task-card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .theme-healthcare .task-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 6px 20px rgba(5, 150, 105, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .theme-healthcare .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .theme-healthcare .task-number {
+      background: var(--background);
+      color: var(--secondary);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .theme-healthcare .task-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .theme-healthcare .task-problem {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .theme-healthcare .task-meta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .theme-healthcare .badge {
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .theme-healthcare .badge-status-notstarted {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
+    .theme-healthcare .badge-status-inprogress {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+
+    .theme-healthcare .badge-status-completed {
+      background: #DBEAFE;
+      color: #1E40AF;
+    }
+
+    .theme-healthcare .task-deadline {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .theme-healthcare .task-assignee {
+      font-size: 13px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    /* Theme 4: Smart Contrast */
+    .theme-contrast {
+      --primary: #2563EB;
+      --secondary: #7C3AED;
+      --background: #0F172A;
+      --surface: #1E293B;
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --border: #334155;
+      --success: #22C55E;
+      --warning: #EAB308;
+      --danger: #EF4444;
+    }
+
+    .theme-contrast .theme-content {
+      background: var(--background);
+    }
+
+    .theme-contrast .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px;
+      background: var(--surface);
+      border-radius: 12px;
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+    }
+
+    .theme-contrast .app-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .theme-contrast .toolbar {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding: 20px;
+      background: var(--surface);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .theme-contrast select {
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--background);
+      color: var(--text-primary);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .theme-contrast select:hover {
+      border-color: var(--primary);
+    }
+
+    .theme-contrast .btn-primary {
+      padding: 10px 24px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .theme-contrast .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+    }
+
+    .theme-contrast .task-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .theme-contrast .task-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .theme-contrast .task-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 6px 24px rgba(37, 99, 235, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .theme-contrast .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .theme-contrast .task-number {
+      background: var(--background);
+      color: var(--text-secondary);
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .theme-contrast .task-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .theme-contrast .task-problem {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .theme-contrast .task-meta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .theme-contrast .badge {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .theme-contrast .badge-status-notstarted {
+      background: #374151;
+      color: #9CA3AF;
+    }
+
+    .theme-contrast .badge-status-inprogress {
+      background: #1E3A8A;
+      color: #60A5FA;
+    }
+
+    .theme-contrast .badge-status-completed {
+      background: #064E3B;
+      color: #6EE7B7;
+    }
+
+    .theme-contrast .task-deadline {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .theme-contrast .task-assignee {
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    .theme-contrast .theme-description {
+      background: var(--surface);
+      border-left-color: var(--primary);
+    }
+
+    .theme-contrast .theme-description h2 {
+      color: var(--text-primary);
+    }
+
+    .theme-contrast .theme-description p {
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>医療的ケア児支援課題管理システム</h1>
+      <p>4つのデザインテーマからお好みのスタイルを選択してください</p>
+    </div>
+
+    <div class="theme-tabs">
+      <button class="theme-tab active" onclick="showTheme('modern')">
+        Modern Professional
+      </button>
+      <button class="theme-tab" onclick="showTheme('minimal')">
+        Clean Minimal
+      </button>
+      <button class="theme-tab" onclick="showTheme('healthcare')">
+        Warm Healthcare
+      </button>
+      <button class="theme-tab" onclick="showTheme('contrast')">
+        Smart Contrast
+      </button>
+    </div>
+
+    <!-- Theme 1: Modern Professional -->
+    <div id="theme-modern" class="theme-content theme-modern active">
+      <div class="theme-description">
+        <h2>🎨 Theme 1: Modern Professional（モダンプロフェッショナル）</h2>
+        <p>
+          洗練されたブルー×グレーの配色で、ビジネスユースに最適。カード形式のレイアウトで情報を見やすく整理し、
+          柔らかな印象を与えながらも、プロフェッショナルな雰囲気を保ちます。長時間の使用でも目が疲れにくい配色設計です。
+        </p>
+      </div>
+
+      <div class="app-header">
+        <div class="app-title">課題一覧</div>
+        <button class="btn-primary">＋ 新規課題登録</button>
+      </div>
+
+      <div class="toolbar">
+        <div class="filter-group">
+          <select>
+            <option>すべての項目</option>
+            <option>家族支援</option>
+            <option>医療連携</option>
+            <option>教育支援</option>
+          </select>
+          <select>
+            <option>すべてのステータス</option>
+            <option>未着手</option>
+            <option>進行中</option>
+            <option>完了</option>
+          </select>
+          <select>
+            <option>すべての対応者</option>
+            <option>田中太郎</option>
+            <option>佐藤花子</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="task-grid">
+        <div class="task-card">
+          <div class="task-header">
+            <span class="task-number">#001</span>
+            <span class="badge badge-status-inprogress">進行中</span>
+          </div>
+          <div class="task-title">家族支援</div>
+          <div class="task-problem">
+            医療的ケア児を持つ家族への支援体制が不足しており、保護者の負担が大きい。
+            レスパイトケアの利用率が低く、孤立している家庭が多数存在する。
+          </div>
+          <div class="task-meta">
+            <span class="task-assignee">👤 田中太郎</span>
+            <span class="task-deadline">📅 2025-03-31</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-header">
+            <span class="task-number">#002</span>
+            <span class="badge badge-status-notstarted">未着手</span>
+          </div>
+          <div class="task-title">医療連携</div>
+          <div class="task-problem">
+            病院と在宅支援サービスの間で情報共有がスムーズに行われず、医療ケアの継続性に課題がある。
+            緊急時の連絡体制も不明確。
+          </div>
+          <div class="task-meta">
+            <span class="task-assignee">👤 佐藤花子</span>
+            <span class="task-deadline">📅 2025-02-28</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-header">
+            <span class="task-number">#003</span>
+            <span class="badge badge-status-completed">完了</span>
+          </div>
+          <div class="task-title">教育支援</div>
+          <div class="task-problem">
+            医療的ケア児の教育機会確保のため、特別支援学校との連携強化が必要。
+            看護師配置の体制整備を進めている。
+          </div>
+          <div class="task-meta">
+            <span class="task-assignee">👤 田中太郎</span>
+            <span class="task-deadline">📅 2024-12-20</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-header">
+            <span class="task-number">#004</span>
+            <span class="badge badge-status-inprogress">進行中</span>
+          </div>
+          <div class="task-title">地域理解促進</div>
+          <div class="task-problem">
+            医療的ケア児に対する地域住民の理解不足により、社会参加が限定的。
+            啓発イベントの企画と実施が求められる。
+          </div>
+          <div class="task-meta">
+            <span class="task-assignee">👤 鈴木一郎</span>
+            <span class="task-deadline">📅 2025-04-15</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Theme 2: Clean Minimal -->
+    <div id="theme-minimal" class="theme-content theme-minimal">
+      <div class="theme-description">
+        <h2>✨ Theme 2: Clean Minimal（クリーンミニマル）</h2>
+        <p>
+          極限まで削ぎ落とした美しさを追求。モノクロ基調のテーブル形式で、情報を一覧性高く表示します。
+          装飾を最小限に抑え、コンテンツに集中できるデザイン。シンプルさを究極まで追求したミニマリストのためのテーマです。
+        </p>
+      </div>
+
+      <div class="app-header">
+        <div class="app-title">課題一覧</div>
+      </div>
+
+      <div class="toolbar">
+        <div>
+          <div class="filter-label">項目</div>
+          <select>
+            <option>すべて</option>
+            <option>家族支援</option>
+            <option>医療連携</option>
+            <option>教育支援</option>
+          </select>
+        </div>
+        <div>
+          <div class="filter-label">ステータス</div>
+          <select>
+            <option>すべて</option>
+            <option>未着手</option>
+            <option>進行中</option>
+            <option>完了</option>
+          </select>
+        </div>
+        <div>
+          <div class="filter-label">対応者</div>
+          <select>
+            <option>すべて</option>
+            <option>田中太郎</option>
+            <option>佐藤花子</option>
+          </select>
+        </div>
+        <button class="btn-primary">新規登録</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 80px;">項番</th>
+            <th style="width: 120px;">項目</th>
+            <th>問題点</th>
+            <th style="width: 120px;">ステータス</th>
+            <th style="width: 120px;">対応者</th>
+            <th style="width: 120px;">期限</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="task-number">#001</td>
+            <td>家族支援</td>
+            <td>医療的ケア児を持つ家族への支援体制が不足しており、保護者の負担が大きい。レスパイトケアの利用率が低く、孤立している家庭が多数存在する。</td>
+            <td><span class="badge badge-status-inprogress">進行中</span></td>
+            <td>田中太郎</td>
+            <td>2025-03-31</td>
+          </tr>
+          <tr>
+            <td class="task-number">#002</td>
+            <td>医療連携</td>
+            <td>病院と在宅支援サービスの間で情報共有がスムーズに行われず、医療ケアの継続性に課題がある。緊急時の連絡体制も不明確。</td>
+            <td><span class="badge badge-status-notstarted">未着手</span></td>
+            <td>佐藤花子</td>
+            <td>2025-02-28</td>
+          </tr>
+          <tr>
+            <td class="task-number">#003</td>
+            <td>教育支援</td>
+            <td>医療的ケア児の教育機会確保のため、特別支援学校との連携強化が必要。看護師配置の体制整備を進めている。</td>
+            <td><span class="badge badge-status-completed">完了</span></td>
+            <td>田中太郎</td>
+            <td>2024-12-20</td>
+          </tr>
+          <tr>
+            <td class="task-number">#004</td>
+            <td>地域理解促進</td>
+            <td>医療的ケア児に対する地域住民の理解不足により、社会参加が限定的。啓発イベントの企画と実施が求められる。</td>
+            <td><span class="badge badge-status-inprogress">進行中</span></td>
+            <td>鈴木一郎</td>
+            <td>2025-04-15</td>
+          </tr>
+          <tr>
+            <td class="task-number">#005</td>
+            <td>相談窓口整備</td>
+            <td>医療的ケア児支援に関する相談窓口が分散しており、保護者が適切な支援にたどり着けない。ワンストップ窓口の設置が必要。</td>
+            <td><span class="badge badge-status-notstarted">未着手</span></td>
+            <td>佐藤花子</td>
+            <td>2025-05-31</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Theme 3: Warm Healthcare -->
+    <div id="theme-healthcare" class="theme-content theme-healthcare">
+      <div class="theme-description">
+        <h2>💚 Theme 3: Warm Healthcare（温かい医療系）</h2>
+        <p>
+          優しいグリーン×ベージュの配色で、安心感と温かみを演出。医療・福祉分野に最適な親しみやすいデザインです。
+          柔らかな色合いが長時間の利用でも目に優しく、利用者に寄り添う印象を与えます。
+        </p>
+      </div>
+
+      <div class="app-header">
+        <div class="app-title">課題一覧</div>
+        <button class="btn-primary">＋ 新規課題登録</button>
+      </div>
+
+      <div class="toolbar">
+        <select>
+          <option>すべての項目</option>
+          <option>家族支援</option>
+          <option>医療連携</option>
+          <option>教育支援</option>
+        </select>
+        <select>
+          <option>すべてのステータス</option>
+          <option>未着手</option>
+          <option>進行中</option>
+          <option>完了</option>
+        </select>
+        <select>
+          <option>すべての対応者</option>
+          <option>田中太郎</option>
+          <option>佐藤花子</option>
+        </select>
+      </div>
+
+      <div class="task-grid">
+        <div class="task-card">
+          <div class="task-header">
+            <span class="task-number">#001</span>
+            <span class="badge badge-status-inprogress">進行中</span>
+          </div>
+          <div class="task-title">家族支援</div>
+          <div class="task-problem">
+            医療的ケア児を持つ家族への支援体制が不足しており、保護者の負担が大きい。
+            レスパイトケアの利用率が低く、孤立している家庭が多数存在する。
+          </div>
+          <div class="task-meta">
+            <span class="task-assignee">👤 田中太郎</span>
+            <span class="task-deadline">📅 2025-03-31</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-header">
+            <span class="task-number">#002</span>
+            <span class="badge badge-status-notstarted">未着手</span>
+          </div>
+          <div class="task-title">医療連携</div>
+          <div class="task-problem">
+            病院と在宅支援サービスの間で情報共有がスムーズに行われず、医療ケアの継続性に課題がある。
+            緊急時の連絡体制も不明確。
+          </div>
+          <div class="task-meta">
+            <span class="task-assignee">👤 佐藤花子</span>
+            <span class="task-deadline">📅 2025-02-28</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-header">
+            <span class="task-number">#003</span>
+            <span class="badge badge-status-completed">完了</span>
+          </div>
+          <div class="task-title">教育支援</div>
+          <div class="task-problem">
+            医療的ケア児の教育機会確保のため、特別支援学校との連携強化が必要。
+            看護師配置の体制整備を進めている。
+          </div>
+          <div class="task-meta">
+            <span class="task-assignee">👤 田中太郎</span>
+            <span class="task-deadline">📅 2024-12-20</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-header">
+            <span class="task-number">#004</span>
+            <span class="badge badge-status-inprogress">進行中</span>
+          </div>
+          <div class="task-title">地域理解促進</div>
+          <div class="task-problem">
+            医療的ケア児に対する地域住民の理解不足により、社会参加が限定的。
+            啓発イベントの企画と実施が求められる。
+          </div>
+          <div class="task-meta">
+            <span class="task-assignee">👤 鈴木一郎</span>
+            <span class="task-deadline">📅 2025-04-15</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Theme 4: Smart Contrast -->
+    <div id="theme-contrast" class="theme-content theme-contrast">
+      <div class="theme-description">
+        <h2>🌙 Theme 4: Smart Contrast（スマートコントラスト）</h2>
+        <p>
+          視認性を最優先した高コントラストのダークモード対応デザイン。ブルー×パープルのグラデーションアクセントで、
+          モダンで洗練された印象を与えます。暗い環境での作業に最適で、目の疲労を軽減します。
+        </p>
+      </div>
+
+      <div class="app-header">
+        <div class="app-title">課題一覧</div>
+        <button class="btn-primary">＋ 新規課題登録</button>
+      </div>
+
+      <div class="toolbar">
+        <select>
+          <option>すべての項目</option>
+          <option>家族支援</option>
+          <option>医療連携</option>
+          <option>教育支援</option>
+        </select>
+        <select>
+          <option>すべてのステータス</option>
+          <option>未着手</option>
+          <option>進行中</option>
+          <option>完了</option>
+        </select>
+        <select>
+          <option>すべての対応者</option>
+          <option>田中太郎</option>
+          <option>佐藤花子</option>
+        </select>
+      </div>
+
+      <div class="task-grid">
+        <div class="task-card">
+          <div class="task-header">
+            <span class="task-number">#001</span>
+            <span class="badge badge-status-inprogress">進行中</span>
+          </div>
+          <div class="task-title">家族支援</div>
+          <div class="task-problem">
+            医療的ケア児を持つ家族への支援体制が不足しており、保護者の負担が大きい。
+            レスパイトケアの利用率が低く、孤立している家庭が多数存在する。
+          </div>
+          <div class="task-meta">
+            <span class="task-assignee">👤 田中太郎</span>
+            <span class="task-deadline">📅 2025-03-31</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-header">
+            <span class="task-number">#002</span>
+            <span class="badge badge-status-notstarted">未着手</span>
+          </div>
+          <div class="task-title">医療連携</div>
+          <div class="task-problem">
+            病院と在宅支援サービスの間で情報共有がスムーズに行われず、医療ケアの継続性に課題がある。
+            緊急時の連絡体制も不明確。
+          </div>
+          <div class="task-meta">
+            <span class="task-assignee">👤 佐藤花子</span>
+            <span class="task-deadline">📅 2025-02-28</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-header">
+            <span class="task-number">#003</span>
+            <span class="badge badge-status-completed">完了</span>
+          </div>
+          <div class="task-title">教育支援</div>
+          <div class="task-problem">
+            医療的ケア児の教育機会確保のため、特別支援学校との連携強化が必要。
+            看護師配置の体制整備を進めている。
+          </div>
+          <div class="task-meta">
+            <span class="task-assignee">👤 田中太郎</span>
+            <span class="task-deadline">📅 2024-12-20</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-header">
+            <span class="task-number">#004</span>
+            <span class="badge badge-status-inprogress">進行中</span>
+          </div>
+          <div class="task-title">地域理解促進</div>
+          <div class="task-problem">
+            医療的ケア児に対する地域住民の理解不足により、社会参加が限定的。
+            啓発イベントの企画と実施が求められる。
+          </div>
+          <div class="task-meta">
+            <span class="task-assignee">👤 鈴木一郎</span>
+            <span class="task-deadline">📅 2025-04-15</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showTheme(theme) {
+      // Hide all themes
+      document.querySelectorAll('.theme-content').forEach(content => {
+        content.classList.remove('active');
+      });
+
+      // Remove active state from all tabs
+      document.querySelectorAll('.theme-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+
+      // Show selected theme
+      document.getElementById('theme-' + theme).classList.add('active');
+
+      // Add active state to clicked tab
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

@@ -16,7 +16,6 @@ import {
   type AssigneeCreateRequest,
   type CategoryStat,
   type StatusStat,
-  TASK_CATEGORIES,
   TASK_STATUSES,
 } from '../types/index.js';
 import { randomUUID } from 'crypto';

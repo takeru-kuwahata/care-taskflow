@@ -34,7 +34,7 @@ export function generateTestTaskData(overrides?: Partial<TaskCreateRequest>): Ta
   const randomStr = Math.random().toString(36).substring(2, 9);
 
   return {
-    category: 'system',
+    category: 'transition',
     problem: `テスト課題-${timestamp}-${randomStr}`,
     status: 'not_started',
     deadline: '2025-12-31',

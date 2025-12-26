@@ -99,7 +99,7 @@ describe('課題管理API 統合テスト', () => {
 
     it('必須項目が不足している場合はエラーになる', async () => {
       const invalidData = {
-        category: 'system',
+        category: 'transition',
         // problemが欠けている
         status: 'not_started',
       };
@@ -117,11 +117,11 @@ describe('課題管理API 統合テスト', () => {
     beforeAll(async () => {
       // テスト用課題を2つ作成
       const taskData1 = generateTestTaskData({
-        category: 'system',
+        category: 'transition',
         status: 'in_progress',
       });
       const taskData2 = generateTestTaskData({
-        category: 'coordination',
+        category: 'respite',
         status: 'not_started',
       });
 
@@ -146,11 +146,11 @@ describe('課題管理API 統合テスト', () => {
     });
 
     it('カテゴリでフィルタリングできる', async () => {
-      const result = await getTaskList({ category: 'system' }, {});
+      const result = await getTaskList({ category: 'transition' }, {});
 
       expect(result.tasks).toBeDefined();
       result.tasks.forEach((task) => {
-        expect(task.category).toBe('system');
+        expect(task.category).toBe('transition');
       });
     });
 
@@ -284,7 +284,7 @@ describe('課題管理API 統合テスト', () => {
     it('課題の作成→一覧取得→詳細取得→更新→削除の一連のフロー', async () => {
       // 1. 課題作成
       const taskData = generateTestTaskData({
-        category: 'training',
+        category: 'welfare',
         problem: 'E2Eテスト課題',
         status: 'not_started',
       });

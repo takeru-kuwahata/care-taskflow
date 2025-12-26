@@ -9,7 +9,7 @@ import { TASK_STATUSES } from '../types/index.js';
  * GET /api/dashboard/stats - ダッシュボード統計取得
  */
 
-async function handleGetDashboardStats(req: AuthenticatedRequest, res: VercelResponse): Promise<void> {
+async function handleGetDashboardStats(_req: AuthenticatedRequest, res: VercelResponse): Promise<void> {
   try {
     // 並列で各統計を取得
     const [categoryStats, statusStats, overdueCount, recentTasks, total] = await Promise.all([

@@ -132,6 +132,12 @@ export interface TaskSort {
   sortOrder?: 'asc' | 'desc';
 }
 
+// ページネーション条件型
+export interface TaskPagination {
+  limit?: number;
+  offset?: number;
+}
+
 // ============================================
 // APIレスポンス型
 // ============================================
@@ -140,6 +146,8 @@ export interface TaskSort {
 export interface TaskListResponse {
   tasks: Task[];
   total: number;
+  limit?: number;
+  offset?: number;
 }
 
 // 課題詳細レスポンス型
@@ -254,4 +262,33 @@ export function isTaskListResponse(obj: unknown): obj is TaskListResponse {
     response.tasks.every(isTask) &&
     typeof response.total === 'number'
   );
+}
+
+// ============================================
+// ダッシュボード関連型
+// ============================================
+
+// カテゴリ別統計
+export interface CategoryStat {
+  category: TaskCategory;
+  count: number;
+}
+
+// ステータス別統計
+export interface StatusStat {
+  status: TaskStatus;
+  count: number;
+}
+
+// ダッシュボード統計レスポンス
+export interface DashboardStatsResponse {
+  summary: {
+    totalTasks: number;
+    completionRate: number;
+    inProgressCount: number;
+    overdueCount: number;
+  };
+  categoryStats: CategoryStat[];
+  statusStats: StatusStat[];
+  recentTasks: Task[];
 }

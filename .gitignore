@@ -30,3 +30,6 @@ Thumbs.db
 # Temp files
 *.tmp
 *.temp
+
+# Deploy scripts (contain sensitive info)
+scripts/deploy-*.sh

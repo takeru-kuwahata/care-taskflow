@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>課題詳細ページ（P-002）- モックアップ</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <style>
+    /* Reset & Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+      background-color: #F3F4F6;
+      color: #1F2937;
+      line-height: 1.6;
+    }
+
+    /* Layout */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* Header Section */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 16px;
+      background-color: white;
+      color: #6B7280;
+      border: 1px solid #D1D5DB;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-back:hover {
+      background-color: #F9FAFB;
+      border-color: #3B82F6;
+      color: #3B82F6;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1F2937;
+    }
+
+    /* Form Section */
+    .form-container {
+      background: white;
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      margin-bottom: 24px;
+    }
+
+    .form-section {
+      margin-bottom: 32px;
+    }
+
+    .form-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1F2937;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #EFF6FF;
+    }
+
+    .form-row {
+      margin-bottom: 24px;
+    }
+
+    .form-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1F2937;
+      margin-bottom: 8px;
+    }
+
+    .form-label.required::after {
+      content: '*';
+      color: #EF4444;
+      margin-left: 4px;
+    }
+
+    .form-label.optional::after {
+      content: '（任意）';
+      color: #9CA3AF;
+      margin-left: 4px;
+      font-weight: 400;
+      font-size: 12px;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #D1D5DB;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #1F2937;
+      background-color: white;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .form-select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%233B82F6' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      appearance: none;
+      padding-right: 40px;
+    }
+
+    /* Multi-item Section (原因・対応案・対応者) */
+    .multi-item-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .multi-item {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .multi-item-input {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #D1D5DB;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #1F2937;
+      background-color: white;
+      transition: border-color 0.2s;
+    }
+
+    .multi-item-input:focus {
+      outline: none;
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-remove {
+      background-color: #FEE2E2;
+      color: #EF4444;
+    }
+
+    .btn-remove:hover {
+      background-color: #FECACA;
+    }
+
+    .btn-add {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background-color: #EFF6FF;
+      color: #3B82F6;
+      border: 1px solid #DBEAFE;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-add:hover {
+      background-color: #DBEAFE;
+    }
+
+    /* Assignee Multi-select */
+    .assignee-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .assignee-item {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .assignee-name {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #D1D5DB;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #1F2937;
+      background-color: white;
+      transition: border-color 0.2s;
+    }
+
+    .assignee-name:focus {
+      outline: none;
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .assignee-organization {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #D1D5DB;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #1F2937;
+      background-color: white;
+      transition: border-color 0.2s;
+    }
+
+    .assignee-organization:focus {
+      outline: none;
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+      margin-top: 32px;
+    }
+
+    .action-buttons-left {
+      display: flex;
+      gap: 16px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 32px;
+      background-color: #3B82F6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn-primary:hover {
+      background-color: #2563EB;
+    }
+
+    .btn-delete {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background-color: white;
+      color: #EF4444;
+      border: 1px solid #EF4444;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-delete:hover {
+      background-color: #FEE2E2;
+    }
+
+    /* Material Icons */
+    .material-icons {
+      font-family: 'Material Icons';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      vertical-align: middle;
+    }
+
+    /* Delete Confirmation Modal (Hidden by default) */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 32px;
+      border-radius: 12px;
+      max-width: 480px;
+      width: 90%;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1F2937;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .modal-message {
+      font-size: 14px;
+      color: #6B7280;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .btn-modal-cancel {
+      padding: 10px 24px;
+      background-color: white;
+      color: #6B7280;
+      border: 1px solid #D1D5DB;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-modal-cancel:hover {
+      background-color: #F9FAFB;
+    }
+
+    .btn-modal-confirm {
+      padding: 10px 24px;
+      background-color: #EF4444;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-modal-confirm:hover {
+      background-color: #DC2626;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header Section -->
+    <div class="page-header">
+      <div class="header-left">
+        <button class="btn-back">
+          <span class="material-icons" style="font-size: 18px;">arrow_back</span>
+          戻る
+        </button>
+        <h1 class="page-title">課題詳細</h1>
+      </div>
+    </div>
+
+    <!-- Form Section -->
+    <div class="form-container">
+      <!-- Basic Information Section -->
+      <div class="form-section">
+        <h2 class="form-section-title">基本情報</h2>
+
+        <!-- 項目（カテゴリ） -->
+        <div class="form-row">
+          <label class="form-label required">項目（カテゴリ）</label>
+          <select class="form-select">
+            <option value="">選択してください</option>
+            <option value="system">システム・情報</option>
+            <option value="coordination">連携・協力</option>
+            <option value="training">研修・育成</option>
+            <option value="support">支援体制</option>
+            <option value="other">その他</option>
+          </select>
+        </div>
+
+        <!-- 問題点 -->
+        <div class="form-row">
+          <label class="form-label required">問題点</label>
+          <textarea class="form-textarea" placeholder="具体的な問題点を入力してください（最大500文字）"></textarea>
+        </div>
+      </div>
+
+      <!-- 原因・対応案 Section -->
+      <div class="form-section">
+        <h2 class="form-section-title">原因・対応案</h2>
+
+        <!-- 原因（複数登録可） -->
+        <div class="form-row">
+          <label class="form-label">原因</label>
+          <div class="multi-item-container">
+            <div class="multi-item">
+              <input type="text" class="multi-item-input" placeholder="原因を入力してください">
+              <button class="btn-icon btn-remove">
+                <span class="material-icons" style="font-size: 20px;">remove_circle</span>
+              </button>
+            </div>
+            <div class="multi-item">
+              <input type="text" class="multi-item-input" placeholder="原因を入力してください">
+              <button class="btn-icon btn-remove">
+                <span class="material-icons" style="font-size: 20px;">remove_circle</span>
+              </button>
+            </div>
+          </div>
+          <button class="btn-add" style="margin-top: 12px;">
+            <span class="material-icons" style="font-size: 18px;">add_circle</span>
+            原因を追加
+          </button>
+        </div>
+
+        <!-- 対応案（複数登録可） -->
+        <div class="form-row">
+          <label class="form-label">対応案</label>
+          <div class="multi-item-container">
+            <div class="multi-item">
+              <input type="text" class="multi-item-input" placeholder="対応案を入力してください">
+              <button class="btn-icon btn-remove">
+                <span class="material-icons" style="font-size: 20px;">remove_circle</span>
+              </button>
+            </div>
+            <div class="multi-item">
+              <input type="text" class="multi-item-input" placeholder="対応案を入力してください">
+              <button class="btn-icon btn-remove">
+                <span class="material-icons" style="font-size: 20px;">remove_circle</span>
+              </button>
+            </div>
+          </div>
+          <button class="btn-add" style="margin-top: 12px;">
+            <span class="material-icons" style="font-size: 18px;">add_circle</span>
+            対応案を追加
+          </button>
+        </div>
+      </div>
+
+      <!-- 進捗管理 Section -->
+      <div class="form-section">
+        <h2 class="form-section-title">進捗管理</h2>
+
+        <!-- 進捗ステータス -->
+        <div class="form-row">
+          <label class="form-label required">進捗ステータス</label>
+          <select class="form-select">
+            <option value="">選択してください</option>
+            <option value="not_started">未着手</option>
+            <option value="in_progress">進行中</option>
+            <option value="completed">完了</option>
+          </select>
+        </div>
+
+        <!-- 対応者（複数選択可） -->
+        <div class="form-row">
+          <label class="form-label">対応者</label>
+          <div class="assignee-list">
+            <div class="assignee-item">
+              <input type="text" class="assignee-name" placeholder="対応者名">
+              <input type="text" class="assignee-organization" placeholder="所属（任意）">
+              <button class="btn-icon btn-remove">
+                <span class="material-icons" style="font-size: 20px;">remove_circle</span>
+              </button>
+            </div>
+            <div class="assignee-item">
+              <input type="text" class="assignee-name" placeholder="対応者名">
+              <input type="text" class="assignee-organization" placeholder="所属（任意）">
+              <button class="btn-icon btn-remove">
+                <span class="material-icons" style="font-size: 20px;">remove_circle</span>
+              </button>
+            </div>
+          </div>
+          <button class="btn-add" style="margin-top: 12px;">
+            <span class="material-icons" style="font-size: 18px;">add_circle</span>
+            対応者を追加
+          </button>
+        </div>
+
+        <!-- 期限 -->
+        <div class="form-row">
+          <label class="form-label optional">期限</label>
+          <input type="date" class="form-input">
+        </div>
+      </div>
+
+      <!-- 詳細情報 Section -->
+      <div class="form-section">
+        <h2 class="form-section-title">詳細情報</h2>
+
+        <!-- 関連事業 -->
+        <div class="form-row">
+          <label class="form-label optional">関連事業</label>
+          <input type="text" class="form-input" placeholder="関連事業名を入力してください">
+        </div>
+
+        <!-- 事業内容 -->
+        <div class="form-row">
+          <label class="form-label optional">事業内容</label>
+          <textarea class="form-textarea" placeholder="事業内容を入力してください" style="min-height: 100px;"></textarea>
+        </div>
+
+        <!-- 該当所属 -->
+        <div class="form-row">
+          <label class="form-label optional">該当所属</label>
+          <input type="text" class="form-input" placeholder="該当所属を入力してください">
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <div class="action-buttons-left">
+        <button class="btn-primary">
+          <span class="material-icons">save</span>
+          保存
+        </button>
+      </div>
+      <button class="btn-delete">
+        <span class="material-icons">delete</span>
+        削除
+      </button>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-content">
+      <h3 class="modal-title">
+        <span class="material-icons" style="color: #EF4444; font-size: 28px;">warning</span>
+        課題の削除
+      </h3>
+      <p class="modal-message">
+        この課題を削除してもよろしいですか？<br>
+        削除すると元に戻せません。
+      </p>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel">キャンセル</button>
+        <button class="btn-modal-confirm">削除する</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Delete confirmation modal
+    const deleteBtn = document.querySelector('.btn-delete');
+    const deleteModal = document.getElementById('deleteModal');
+    const cancelBtn = document.querySelector('.btn-modal-cancel');
+    const confirmBtn = document.querySelector('.btn-modal-confirm');
+
+    deleteBtn.addEventListener('click', () => {
+      deleteModal.classList.add('active');
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      deleteModal.classList.remove('active');
+    });
+
+    confirmBtn.addEventListener('click', () => {
+      // 削除処理（実装時）
+      console.log('課題を削除します');
+      deleteModal.classList.remove('active');
+    });
+
+    // Close modal when clicking overlay
+    deleteModal.addEventListener('click', (e) => {
+      if (e.target === deleteModal) {
+        deleteModal.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+</html>

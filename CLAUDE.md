@@ -32,7 +32,7 @@
 ## テスト認証情報
 ```yaml
 開発用アカウント:
-  email: test@care-taskflow.local
+  email: test@example.com
   password: TestPass2025!
 
 外部サービス:
@@ -234,4 +234,94 @@
 
 ---
 
+### 13. E2Eテスト自律実行の絶対原則
+
+**【重要】セッション開始時・compact後の自動判定**
+
+このセクションはE2Eテストオーケストレーターによって自動生成されました。
+
+---
+
+**最初に必ず専門知識を注入してください**
+
+E2Eテスト実行中の場合、以下を実行してから開始してください：
+
+```
+inject_knowledge ツールで keyword: "@E2Eテストオーケストレーター"
+を実行してから開始してください。（初回必須・compact後も必須）
+```
+
+重要：キーワードは "@E2Eテストオーケストレーター"
+をそのまま使用してください。変換や推測は不要です。
+
+準備完了です。まず知識注入を実行してから、タスクを開始してください。
+
+---
+
+**E2Eテストオーケストレーター実行中の判定**:
+- SCOPE_PROGRESS.mdに「## 📊 E2Eテスト全体進捗」が存在する場合
+- または、セッション再開時に前回のメッセージに「E2Eテスト」「オーケストレーター」キーワードがある場合
+
+**セッション開始時・compact後の自動処理**:
+1. 上記の判定基準でE2Eテスト実行中と判定
+2. inject_knowledge('@E2Eテストオーケストレーター') を必ず実行
+3. docs/e2e-best-practices.md の存在確認（なければ初期テンプレート作成）
+4. SCOPE_PROGRESS.mdから [ ] テストの続きを自動で特定
+5. [x] のテストは絶対にスキップ
+6. ユーザー確認不要、完全自律モードで継続
+7. ページ選定も自動（未完了ページを上から順に選択）
+8. 停止条件：全テスト100%完了のみ
+
+**5回エスカレーション後の処理**:
+- チェックリストに [-] マークを付ける
+- docs/e2e-test-history/skipped-tests.md に記録
+- 次のテストへ自動で進む（停止しない）
+
+**ベストプラクティス自動蓄積**:
+- 各テストで成功した方法を docs/e2e-best-practices.md に自動保存
+- 後続テストが前のテストの知見を自動活用
+- 試行錯誤が減っていく（学習効果）
+
+**重要**:
+- この原則はCLAUDE.mdに記載されているため、compact後も自動で適用される
+- セッション開始時にこのセクションがない場合、オーケストレーターが自動で追加する
+
+---
+
 **設定ファイル終了**
+
+## デプロイ設定
+```yaml
+デプロイ日: 2025-12-26
+構成: A（お試しデプロイ：開発DBを本番で共用）
+
+本番環境URL:
+  フロントエンド: https://care-taskflow.vercel.app
+  バックエンド: https://care-taskflow-api-877111301724.asia-northeast1.run.app
+
+インフラ:
+  frontend:
+    プラットフォーム: Vercel
+    プロジェクト名: care-taskflow
+    環境変数:
+      - VITE_API_BASE_URL: https://care-taskflow-api-877111301724.asia-northeast1.run.app
+  
+  backend:
+    プラットフォーム: Google Cloud Run
+    プロジェクトID: care-taskflow
+    サービス名: care-taskflow-api
+    リージョン: asia-northeast1
+    環境変数:
+      - CORS_ORIGIN: https://care-taskflow.vercel.app
+      - DATABASE_URL: [開発環境と同じNeon PostgreSQL]
+      - JWT_SECRET: [.env.localより]
+      - CLERK_SECRET_KEY: [.env.localより]
+
+  database:
+    プロバイダ: Neon PostgreSQL
+    環境: 開発と本番で共用（構成A）
+    接続文字列: [.env.local参照]
+
+デプロイスクリプト:
+  本番: scripts/deploy-production.sh
+```

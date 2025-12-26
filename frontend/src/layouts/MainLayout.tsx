@@ -64,16 +64,18 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       >
         <nav className="p-4 space-y-2">
           <a
-            href="/tasks"
-            className="block px-4 py-2 rounded-lg hover:bg-primary-50 text-gray-700 hover:text-primary-700"
+            href="/dashboard"
+            className="block px-4 py-2 rounded-lg hover:bg-primary-50 text-gray-700 hover:text-primary-700 flex items-center gap-2"
           >
-            課題一覧
+            <span>📊</span>
+            <span>ダッシュボード</span>
           </a>
           <a
-            href="/profile"
-            className="block px-4 py-2 rounded-lg hover:bg-primary-50 text-gray-700 hover:text-primary-700"
+            href="/tasks"
+            className="block px-4 py-2 rounded-lg hover:bg-primary-50 text-gray-700 hover:text-primary-700 flex items-center gap-2"
           >
-            プロフィール
+            <span>📋</span>
+            <span>課題一覧</span>
           </a>
         </nav>
       </aside>

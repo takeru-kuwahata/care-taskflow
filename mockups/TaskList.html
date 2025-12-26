@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>課題一覧ページ（P-001）- モックアップ</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <style>
+    /* Reset & Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+      background-color: #F3F4F6;
+      color: #1F2937;
+      line-height: 1.6;
+    }
+
+    /* Layout */
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* Header Section */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1F2937;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background-color: #3B82F6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn-primary:hover {
+      background-color: #2563EB;
+    }
+
+    /* Filter Section */
+    .filter-section {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .filter-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1F2937;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-controls {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .filter-label {
+      font-size: 13px;
+      color: #6B7280;
+      font-weight: 500;
+    }
+
+    .filter-select {
+      padding: 8px 32px 8px 12px;
+      border: 1px solid #D1D5DB;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #1F2937;
+      background-color: white;
+      cursor: pointer;
+      min-width: 200px;
+      transition: border-color 0.2s;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%233B82F6' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      appearance: none;
+    }
+
+    .filter-select:hover {
+      border-color: #3B82F6;
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Table Section */
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background-color: #EFF6FF;
+    }
+
+    th {
+      padding: 16px 20px;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1F2937;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      transition: background-color 0.2s;
+    }
+
+    th:hover {
+      background-color: #DBEAFE;
+    }
+
+    th::after {
+      content: '⇅';
+      margin-left: 8px;
+      color: #93C5FD;
+      font-size: 12px;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #F3F4F6;
+      cursor: pointer;
+      transition: background-color 0.15s;
+    }
+
+    tbody tr:hover {
+      background-color: #EFF6FF;
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    td {
+      padding: 16px 20px;
+      font-size: 14px;
+      color: #1F2937;
+    }
+
+    .task-number {
+      font-weight: 600;
+      color: #3B82F6;
+    }
+
+    .task-category {
+      display: inline-block;
+      padding: 4px 12px;
+      background-color: #EFF6FF;
+      color: #3B82F6;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .task-problem {
+      max-width: 400px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Status Badge */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .status-badge.not-started {
+      background-color: #F3F4F6;
+      color: #6B7280;
+    }
+
+    .status-badge.in-progress {
+      background-color: #DBEAFE;
+      color: #3B82F6;
+    }
+
+    .status-badge.completed {
+      background-color: #D1FAE5;
+      color: #10B981;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .status-badge.not-started .status-dot {
+      background-color: #9CA3AF;
+    }
+
+    .status-badge.in-progress .status-dot {
+      background-color: #3B82F6;
+    }
+
+    .status-badge.completed .status-dot {
+      background-color: #10B981;
+    }
+
+    /* Assignee */
+    .task-assignee {
+      color: #6B7280;
+    }
+
+    /* Deadline */
+    .task-deadline {
+      color: #6B7280;
+    }
+
+    .task-deadline.overdue {
+      color: #EF4444;
+      font-weight: 600;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: #93C5FD;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .empty-state-text {
+      font-size: 16px;
+      color: #6B7280;
+    }
+
+    /* Material Icons */
+    .material-icons {
+      font-family: 'Material Icons';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header Section -->
+    <div class="page-header">
+      <h1 class="page-title">課題一覧</h1>
+      <button class="btn-primary">
+        <span class="material-icons" style="font-size: 20px;">add_circle</span>
+        新規課題登録
+      </button>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+      <div class="filter-title">
+        <span class="material-icons" style="font-size: 18px;">filter_list</span>
+        フィルター
+      </div>
+      <div class="filter-controls">
+        <div class="filter-group">
+          <label class="filter-label">項目（カテゴリ）</label>
+          <select class="filter-select">
+            <option value="">すべて</option>
+            <option value="system">システム・情報</option>
+            <option value="coordination">連携・協力</option>
+            <option value="training">研修・育成</option>
+            <option value="support">支援体制</option>
+            <option value="other">その他</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">進捗ステータス</label>
+          <select class="filter-select">
+            <option value="">すべて</option>
+            <option value="not-started">未着手</option>
+            <option value="in-progress">進行中</option>
+            <option value="completed">完了</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">対応者</label>
+          <select class="filter-select">
+            <option value="">すべて</option>
+            <option value="tanaka">田中太郎</option>
+            <option value="suzuki">鈴木花子</option>
+            <option value="sato">佐藤次郎</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 80px;">項番</th>
+            <th style="width: 180px;">項目</th>
+            <th>問題点</th>
+            <th style="width: 140px;">進捗ステータス</th>
+            <th style="width: 140px;">対応者</th>
+            <th style="width: 120px;">期限</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Sample Row 1 -->
+          <tr>
+            <td class="task-number">001</td>
+            <td><span class="task-category">システム・情報</span></td>
+            <td class="task-problem">医療的ケア児の情報が各部署で分散しており、一元管理ができていない</td>
+            <td>
+              <span class="status-badge in-progress">
+                <span class="status-dot"></span>
+                進行中
+              </span>
+            </td>
+            <td class="task-assignee">田中太郎</td>
+            <td class="task-deadline">2025-01-31</td>
+          </tr>
+
+          <!-- Sample Row 2 -->
+          <tr>
+            <td class="task-number">002</td>
+            <td><span class="task-category">連携・協力</span></td>
+            <td class="task-problem">教育委員会と福祉部門の連携が不十分で、支援の漏れが発生している</td>
+            <td>
+              <span class="status-badge not-started">
+                <span class="status-dot"></span>
+                未着手
+              </span>
+            </td>
+            <td class="task-assignee">鈴木花子</td>
+            <td class="task-deadline">2025-02-15</td>
+          </tr>
+
+          <!-- Sample Row 3 -->
+          <tr>
+            <td class="task-number">003</td>
+            <td><span class="task-category">研修・育成</span></td>
+            <td class="task-problem">医療的ケアに関する職員研修が不足しており、対応スキルにばらつきがある</td>
+            <td>
+              <span class="status-badge in-progress">
+                <span class="status-dot"></span>
+                進行中
+              </span>
+            </td>
+            <td class="task-assignee">佐藤次郎</td>
+            <td class="task-deadline">2025-03-10</td>
+          </tr>
+
+          <!-- Sample Row 4 -->
+          <tr>
+            <td class="task-number">004</td>
+            <td><span class="task-category">支援体制</span></td>
+            <td class="task-problem">緊急時の支援体制が不明確で、保護者が不安を感じている</td>
+            <td>
+              <span class="status-badge completed">
+                <span class="status-dot"></span>
+                完了
+              </span>
+            </td>
+            <td class="task-assignee">田中太郎</td>
+            <td class="task-deadline">2024-12-20</td>
+          </tr>
+
+          <!-- Sample Row 5 (Overdue) -->
+          <tr>
+            <td class="task-number">005</td>
+            <td><span class="task-category">その他</span></td>
+            <td class="task-problem">予算不足により、必要な医療機器の配備が遅れている</td>
+            <td>
+              <span class="status-badge not-started">
+                <span class="status-dot"></span>
+                未着手
+              </span>
+            </td>
+            <td class="task-assignee">鈴木花子</td>
+            <td class="task-deadline overdue">2024-12-15</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

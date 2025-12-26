@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { User, LoginCredentials, SignupData } from '../types';
-import { mockAuthService } from '../services/api/mockAuthService';
+import { authService } from '../services/AuthService';
 
 interface AuthContextType {
   user: User | null;
@@ -23,14 +23,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     // ページロード時にトークンからユーザー情報を復元
-    const loadUser = async () => {
+    const loadUser = () => {
       const token = localStorage.getItem('auth_token');
-      if (token) {
+      const userStr = localStorage.getItem('user');
+
+      if (token && userStr) {
         try {
-          const currentUser = await mockAuthService.getCurrentUser(token);
+          const currentUser = JSON.parse(userStr) as User;
           setUser(currentUser);
-        } catch (error) {
+        } catch {
           localStorage.removeItem('auth_token');
+          localStorage.removeItem('user');
         }
       }
       setIsLoading(false);
@@ -40,21 +43,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (credentials: LoginCredentials) => {
-    const response = await mockAuthService.login(credentials);
+    const response = await authService.login(credentials);
     setUser(response.user);
     localStorage.setItem('auth_token', response.token);
+    localStorage.setItem('user', JSON.stringify(response.user));
   };
 
   const signup = async (data: SignupData) => {
-    const response = await mockAuthService.signup(data);
+    const response = await authService.signup(data);
     setUser(response.user);
     localStorage.setItem('auth_token', response.token);
+    localStorage.setItem('user', JSON.stringify(response.user));
   };
 
   const logout = async () => {
-    await mockAuthService.logout();
+    await authService.logout();
     setUser(null);
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('user');
   };
 
   return (

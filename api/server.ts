@@ -103,6 +103,9 @@ const createVercelHandler = async (modulePath: string) => {
     await handler(req, res);
   });
 
+  // ダッシュボードエンドポイント
+  app.get('/api/dashboard/stats', await createVercelHandler('./dashboard/stats.js'));
+
   // ヘルスチェック
   app.get('/api/health', (_req, res) => {
     res.json({

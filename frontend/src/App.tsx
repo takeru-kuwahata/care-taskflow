@@ -6,6 +6,7 @@ import SignupPage from './pages/public/Signup';
 import DashboardPage from './pages/user/Dashboard';
 import TaskListPage from './pages/user/TaskList';
 import TaskDetailPage from './pages/user/TaskDetail';
+import { ChangePassword } from './pages/user/ChangePassword';
 
 function App() {
   return (
@@ -46,6 +47,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <TaskDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/change-password"
+            element={
+              <ProtectedRoute>
+                <ChangePassword />
               </ProtectedRoute>
             }
           />

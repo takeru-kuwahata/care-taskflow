@@ -1,8 +1,8 @@
 # 医療的ケア児支援課題管理システム - 要件定義書
 
-**最終更新**: 2025-12-24
-**バージョン**: 1.0
-**ステータス**: 確定
+**最終更新**: 2025-12-27
+**バージョン**: 1.2（Phase 12追加）
+**ステータス**: 確定・本番稼働中
 
 ---
 
@@ -95,41 +95,12 @@
 課題の全体進捗を視覚的にわかりやすく表示し、一目でプロジェクト状況を把握する
 
 #### 主要機能
-- **サマリーカード**
-  - 総課題数
-  - 完了率（完了/総数）
-  - 進行中の課題数
-  - 期限切れ件数
-- **カテゴリ別課題数グラフ**（円グラフまたはドーナツグラフ）
-  - 成人移行、レスパイト、福祉サービス、保育園・幼稚園、学校、在宅生活、その他
-- **ステータス別進捗グラフ**（棒グラフまたは積み上げ棒グラフ）
-  - 未着手 / 進行中 / 完了 の件数
-- **最近の活動**（オプション）
-  - 最近更新された課題5件
-  - 期限が近い課題のリスト
+- サマリーカード（総課題数、完了率、進行中、期限切れ）
+- カテゴリ別課題数グラフ
+- ステータス別進捗グラフ
+- 最近の活動（オプション）
 
-#### 必要な操作
-| 操作種別 | 操作内容 | 必要な入力 | 期待される出力 |
-|---------|---------|-----------|---------------|
-| 取得 | 統計情報を取得 | なし | 統計データ（サマリー、カテゴリ別、ステータス別） |
-
-#### データ構造（概念）
-```yaml
-DashboardStats:
-  summary:
-    - totalTasks: 総課題数
-    - completionRate: 完了率
-    - inProgressCount: 進行中の課題数
-    - overdueCount: 期限切れ件数
-  categoryStats:
-    - category: カテゴリ名
-    - count: 件数
-  statusStats:
-    - status: ステータス
-    - count: 件数
-  recentTasks:
-    - tasks: 最近更新された課題一覧（最大5件）
-```
+※実装完了：詳細はコード参照（frontend/src/pages/user/Dashboard.tsx、api/dashboard/index.ts）
 
 ---
 
@@ -139,48 +110,14 @@ DashboardStats:
 全課題を一覧表示し、ステータスと優先度を把握する
 
 #### 主要機能
-- 課題一覧テーブル表示
-  - 列: 項番、項目（カテゴリ）、問題点、進捗ステータス、対応者、期限
-- フィルタリング機能
-  - 項目（カテゴリ）別
-  - 進捗ステータス別
-  - 対応者別
-- ソート機能（項番、期限、ステータス等）
-- **ページネーション機能**（Phase 11追加）
-  - 1ページあたり20件表示（デフォルト）
-  - 表示件数変更（10件/20件/50件/100件）
-  - ページ切り替えUI（前へ/次へ、ページ番号）
-- 新規課題登録ボタン（→ P-002へ遷移）
-- 課題クリックで詳細表示（→ P-002へ遷移）
+- 課題一覧テーブル表示（項番、カテゴリ、問題点、ステータス、対応者、期限）
+- フィルタリング機能（カテゴリ、ステータス、対応者）
+- ソート機能
+- ページネーション機能（20件/ページ、表示件数変更可）
+- 新規課題登録ボタン
+- 課題クリックで詳細表示
 
-#### 必要な操作
-| 操作種別 | 操作内容 | 必要な入力 | 期待される出力 |
-|---------|---------|-----------|---------------|
-| 取得 | 課題一覧を取得 | フィルタ条件（任意） | 課題一覧データ |
-| フィルター | 条件に合致する課題を抽出 | カテゴリ、ステータス、対応者 | フィルター済み一覧 |
-| ソート | 指定列でソート | 列名、昇順/降順 | ソート済み一覧 |
-
-#### 処理フロー
-1. ユーザーがページにアクセス
-2. システムが全課題をデータベースから取得
-3. テーブル形式で表示
-4. フィルター/ソート操作に応じてリアルタイム更新
-5. 課題クリックで詳細ページへ遷移
-
-#### データ構造（概念）
-```yaml
-TaskList:
-  識別子: 取得条件（フィルター、ソート）
-  基本情報:
-    - tasks: Task[]（課題配列）
-  フィルター条件:
-    - category: 項目（カテゴリ）（任意）
-    - status: 進捗ステータス（任意）
-    - assignee: 対応者（任意）
-  ソート条件:
-    - sortBy: ソート列名（任意）
-    - sortOrder: 昇順/降順（任意）
-```
+※実装完了：詳細はコード参照（frontend/src/pages/user/TaskList.tsx）
 
 ---
 
@@ -190,58 +127,12 @@ TaskList:
 課題の登録・編集・削除を行い、詳細情報を管理する
 
 #### 主要機能
-- 課題情報の表示・編集
-  - 項目（カテゴリ）選択
-  - 問題点入力
-  - 原因（複数登録可、追加・削除可能）
-  - 対応案（複数登録可、追加・削除可能）
-  - 進捗ステータス選択
-  - 対応者（複数選択可）
-  - 期限選択
-  - 関連事業、事業内容、該当所属
+- 課題情報の表示・編集（カテゴリ、問題点、原因、対応案、ステータス、対応者、期限、関連事業等）
 - 保存ボタン（登録/更新）
 - 削除ボタン（確認ダイアログ付き）
-- 戻るボタン（→ P-001へ遷移）
+- 戻るボタン
 
-#### 必要な操作
-| 操作種別 | 操作内容 | 必要な入力 | 期待される出力 |
-|---------|---------|-----------|---------------|
-| 取得 | 課題詳細を取得 | 課題ID | 課題詳細データ |
-| 作成 | 新規課題を登録 | 全課題属性 | 登録成功/失敗 |
-| 更新 | 既存課題を更新 | 課題ID、更新内容 | 更新成功/失敗 |
-| 削除 | 課題を削除 | 課題ID | 削除成功/失敗 |
-
-#### 処理フロー
-1. ユーザーが新規登録 or 課題をクリック
-2. 新規の場合: 空フォーム表示
-3. 編集の場合: 既存データを取得して表示
-4. ユーザーが情報を入力・編集
-5. 保存ボタンクリック → データベースに保存
-6. 削除ボタンクリック → 確認ダイアログ → 削除実行
-7. 一覧ページへ戻る
-
-#### データ構造（概念）
-```yaml
-Task:
-  識別子: id (UUID)
-  基本情報:
-    - task_number: 項番（自動採番）
-    - category: 項目（カテゴリ）（必須）
-    - problem: 問題点（必須）
-    - status: 進捗ステータス（未着手/進行中/完了）
-    - deadline: 期限（任意）
-    - related_business: 関連事業（任意）
-    - business_content: 事業内容（任意）
-    - organization: 該当所属（任意）
-  メタ情報:
-    - created_at: 作成日時
-    - updated_at: 更新日時
-    - created_by: 作成者（ユーザーID）
-  関連:
-    - causes: 原因（1対多）
-    - actions: 対応案（1対多）
-    - assignees: 対応者（1対多）
-```
+※実装完了：詳細はコード参照（frontend/src/pages/user/TaskDetail.tsx）
 
 ---
 
@@ -249,103 +140,30 @@ Task:
 
 ### 4.1 主要エンティティ
 
-```yaml
-Task（課題）:
-  概要: 医療的ケア児支援における課題情報
-  主要属性:
-    - 識別情報: id, task_number
-    - 課題内容: category, problem, status
-    - 詳細情報: deadline, related_business, business_content, organization
-    - メタ情報: created_at, updated_at, created_by
-  関連:
-    - Cause（原因）: 1対多
-    - Action（対応案）: 1対多
-    - Assignee（対応者）: 1対多
+※実装完了：詳細はコード参照
+- DBスキーマ: api/db/schema.ts
+- フロントエンド型定義: frontend/src/types/index.ts
 
-Cause（原因）:
-  概要: 課題の原因
-  主要属性:
-    - 識別情報: id
-    - 内容: cause
-    - メタ情報: created_at
-  関連:
-    - Task（課題）: 多対1
+**エンティティ**:
+- User（ユーザー）
+- Task（課題）
+- Cause（原因）
+- Action（対応案）
+- Assignee（対応者）
 
-Action（対応案）:
-  概要: 課題への対応案
-  主要属性:
-    - 識別情報: id
-    - 内容: action
-    - メタ情報: created_at
-  関連:
-    - Task（課題）: 多対1
-
-Assignee（対応者）:
-  概要: 課題の対応者
-  主要属性:
-    - 識別情報: id
-    - 対応者情報: name, organization
-    - メタ情報: created_at
-  関連:
-    - Task（課題）: 多対1
-
-User（ユーザー）:
-  概要: システム利用者
-  主要属性:
-    - 識別情報: id
-    - 認証情報: email, hashed_password
-    - メタ情報: created_at, updated_at
-  関連:
-    - Task（課題）: 1対多（作成者）
-```
-
-### 4.2 エンティティ関係図
+**エンティティ関係**:
 ```
 User ──1:N── Task ─┬─1:N─ Cause
                    ├─1:N─ Action
                    └─1:N─ Assignee
 ```
 
-### 4.3 バリデーションルール
-
-```yaml
-Task:
-  category:
-    - ルール: 必須、選択肢から選択
-    - 理由: 課題の分類に必要
-  problem:
-    - ルール: 必須、最大500文字
-    - 理由: 課題の核心情報
-  status:
-    - ルール: 必須、「未着手」「進行中」「完了」のいずれか
-    - 理由: 進捗管理に必要
-  deadline:
-    - ルール: 任意、日付形式
-    - 理由: 期限管理に使用
-
-Cause:
-  cause:
-    - ルール: 必須、最大500文字
-    - 理由: 原因の明確化
-
-Action:
-  action:
-    - ルール: 必須、最大500文字
-    - 理由: 対応案の明確化
-
-Assignee:
-  name:
-    - ルール: 必須、最大100文字
-    - 理由: 対応者の識別
-
-User:
-  email:
-    - ルール: 必須、有効なメール形式、一意
-    - 理由: ログイン認証とアカウント識別
-  password:
-    - ルール: 必須、8文字以上
-    - 理由: セキュリティ確保
-```
+**主要バリデーション**:
+- category: 必須、7つのカテゴリから選択
+- problem: 必須、最大500文字
+- status: 必須（未着手/進行中/完了）
+- email: 必須、有効なメール形式、一意
+- password: 必須、8文字以上
 
 ---
 
@@ -401,32 +219,42 @@ CVSS 3.1の評価観点:
 
 ---
 
-## 6. 複合API処理（バックエンド内部処理）
+## 6. API設計
 
-**注意**: このセクションは、複雑な処理フローがある場合のみ記載してください。
+※実装完了：詳細はコード参照（api/配下）
 
-### 複合処理-001: 課題の一括取得とフィルタリング
-**トリガー**: 課題一覧ページアクセス
-**フロントエンドAPI**: GET /api/tasks
-**バックエンド内部処理**:
-1. データベースから全課題を取得
-2. 関連する原因・対応案・対応者を結合（JOIN）
-3. フィルタ条件を適用（カテゴリ、ステータス、対応者）
-4. ソート条件を適用
-**結果**: フィルター・ソート済み課題一覧
-**外部サービス依存**: Neon PostgreSQL
+### エンドポイント一覧（全17エンドポイント）
 
-### 複合処理-002: 課題の作成・更新
-**トリガー**: 課題詳細ページで保存ボタンクリック
-**フロントエンドAPI**: POST /api/tasks（新規）/ PUT /api/tasks/:id（更新）
-**バックエンド内部処理**:
-1. バリデーション実行
-2. トランザクション開始
-3. 課題本体を保存
-4. 原因・対応案・対応者を保存（複数）
-5. トランザクションコミット
-**結果**: 保存成功/失敗
-**外部サービス依存**: Neon PostgreSQL
+#### 認証API（3エンドポイント）
+- POST /api/auth/signup - 新規ユーザー登録
+- POST /api/auth/login - ログイン
+- POST /api/auth/logout - ログアウト
+
+#### 課題管理API（5エンドポイント）
+- GET /api/tasks - 課題一覧取得（ページネーション対応）
+- GET /api/tasks/:id - 課題詳細取得
+- POST /api/tasks - 課題作成
+- PUT /api/tasks/:id - 課題更新（Phase 12: importance, urgency 対応）
+- DELETE /api/tasks/:id - 課題削除
+
+#### ダッシュボードAPI（2エンドポイント）
+- GET /api/dashboard/stats - ダッシュボード統計情報取得
+- GET /api/dashboard/matrix - 重要度×緊急度マトリクス取得（Phase 12追加）
+
+#### タグAPI（3エンドポイント、Phase 12追加）
+- GET /api/tags - タグ一覧取得
+- POST /api/tasks/:id/tags - タグ追加
+- DELETE /api/tasks/:id/tags/:tagId - タグ削除
+
+#### コメントAPI（2エンドポイント、Phase 12追加）
+- GET /api/tasks/:id/comments - コメント一覧取得
+- POST /api/tasks/:id/comments - コメント投稿
+
+#### ヘルスチェックAPI（1エンドポイント）
+- GET /api/health - ヘルスチェック
+
+#### その他（1エンドポイント）
+- GET /api/current-user - 現在のユーザー情報取得
 
 ---
 
@@ -547,6 +375,408 @@ API: REST API（Vercel Serverless Functions）
 - コメント機能
 - 通知機能（メール、プッシュ通知）
 - モバイル対応（レスポンシブ強化）
+
+---
+
+## 10. Phase 12: 対話促進機能群（実装完了・本番稼働中）
+
+### 10.1 概要
+
+**目的**: 年始の打ち合わせ（星野先生・森下さん・桑畑さん）で163件の課題を議論し、対応策を提案するための3つの機能。
+
+**背景**:
+- 課題の整理はできているが「対応策の提案」が求められている
+- Excel渡されて「提案を書け」と言われても出てこない
+- 星野先生との対話で初めてアイデアが湧く
+- **このシステムは「対話を生み出すためのツール」**
+
+**実装完了日**: 2025-12-27
+**本番稼働**: https://care-taskflow.vercel.app
+
+### 10.2 3つの機能
+
+1. **タグクラウド機能**: 課題間の緩やかな関連付け
+2. **コメント機能**: 時系列の対話・提案記録
+3. **重要度×緊急度マトリクス**: 優先順位の可視化
+
+---
+
+### 10.3 機能1: タグクラウド
+
+#### データモデル
+
+**新規テーブル**:
+```sql
+-- タグテーブル
+CREATE TABLE tags (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- 課題-タグ中間テーブル（多対多）
+CREATE TABLE task_tags (
+  task_id TEXT NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+  tag_id TEXT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (task_id, tag_id)
+);
+```
+
+#### UI設計
+
+**課題詳細ページ（P-002）**:
+- タグ入力フィールド（既存タグをサジェスト）
+- タグ表示（Badge形式）
+
+**課題一覧ページ（P-001）**:
+- テーブルに「タグ」カラム追加
+- タグクリックで絞り込み
+- フィルターに「タグ」追加
+
+#### API設計
+
+- `GET /api/tags` - タグ一覧取得
+- `POST /api/tasks/:id/tags` - タグ追加
+- `DELETE /api/tasks/:id/tags/:tagId` - タグ削除
+
+---
+
+### 10.4 機能2: コメント機能
+
+#### データモデル
+
+**新規テーブル**:
+```sql
+CREATE TABLE comments (
+  id TEXT PRIMARY KEY,
+  task_id TEXT NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+  user_id TEXT NOT NULL REFERENCES users(id),
+  content TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+```
+
+**重要な設計原則**:
+- **元データ（Cause/Action/Assignee）は保護**: Excelから移植したデータは改変しない
+- **コメントは別の対話スペース**: 新しい提案・議論を記録
+
+#### UI設計
+
+**課題詳細ページ（P-002）**:
+```
+┌────────────────────┐
+│ 基本情報            │
+├────────────────────┤
+│ 【元データ】        │
+│ 原因（複数）        │ ← Excelから移植（保護）
+│ 対応案（複数）      │ ← Excelから移植（保護）
+│ 対応者（複数）      │ ← Excelから移植（保護）
+├────────────────────┤
+│ 【新規：コメント】  │ ← これを追加
+│   桑畑（12/26）     │
+│   「提案: XXX」     │
+│     └ 星野（12/26） │
+│       「いいね」    │
+│   [コメント追加]    │
+└────────────────────┘
+```
+
+**課題一覧ページ（P-001）**:
+- コメント件数バッジ表示（例: 💬 3）
+
+#### API設計
+
+- `GET /api/tasks/:id/comments` - コメント一覧取得
+- `POST /api/tasks/:id/comments` - コメント投稿
+- `PUT /api/comments/:id` - コメント編集（Phase 2）
+- `DELETE /api/comments/:id` - コメント削除（Phase 2）
+
+**Phase 1の制約**:
+- スレッド機能（返信）は Phase 2 以降
+- Phase 1 では1階層のみのシンプルなコメント
+
+---
+
+### 10.5 機能3: 重要度×緊急度マトリクス
+
+#### データモデル
+
+**tasks テーブルへのカラム追加**:
+```sql
+ALTER TABLE tasks ADD COLUMN importance text;  -- 'high' | 'medium' | 'low' | null
+ALTER TABLE tasks ADD COLUMN urgency text;     -- 'high' | 'medium' | 'low' | null
+```
+
+**型定義追加**:
+```typescript
+// 重要度レベル
+export type ImportanceLevel = 'high' | 'medium' | 'low';
+export const IMPORTANCE_LEVELS = {
+  HIGH: 'high',
+  MEDIUM: 'medium',
+  LOW: 'low',
+} as const;
+export const IMPORTANCE_LABELS: Record<ImportanceLevel, string> = {
+  high: '高',
+  medium: '中',
+  low: '低',
+};
+
+// 緊急度レベル
+export type UrgencyLevel = 'high' | 'medium' | 'low';
+export const URGENCY_LEVELS = {
+  HIGH: 'high',
+  MEDIUM: 'medium',
+  LOW: 'low',
+} as const;
+export const URGENCY_LABELS: Record<UrgencyLevel, string> = {
+  high: '高',
+  medium: '中',
+  low: '低',
+};
+
+// Task型への追加
+export interface Task {
+  // ... 既存フィールド
+  importance?: ImportanceLevel;
+  urgency?: UrgencyLevel;
+}
+
+// マトリクス表示用の型
+export interface MatrixCell {
+  importance: ImportanceLevel;
+  urgency: UrgencyLevel;
+  count: number;
+}
+
+export interface PriorityMatrixResponse {
+  matrix: MatrixCell[];  // 9セル（3x3）
+  unsetCount: number;    // 未設定の課題数
+  totalTasks: number;    // 総課題数
+}
+```
+
+### 10.3 API設計
+
+**新規エンドポイント**:
+- `GET /api/dashboard/matrix` - マトリクス統計取得
+
+**既存エンドポイント拡張**:
+- `PUT /api/tasks/:id` - importance, urgency フィールド追加
+- `GET /api/tasks` - importance, urgency フィルター追加
+
+### 10.4 UI設計
+
+#### 課題詳細ページ（P-002）
+
+**追加要素**（進捗管理セクション内）:
+```tsx
+{/* 重要度×緊急度 */}
+<div className="grid grid-cols-2 gap-4 mb-6">
+  <div>
+    <label className="block text-sm font-semibold text-gray-800 mb-2">
+      重要度
+      <span className="text-gray-500 ml-1 font-normal text-xs">（任意）</span>
+    </label>
+    <select value={importance} onChange={(e) => setImportance(e.target.value)}>
+      <option value="">未設定</option>
+      <option value="high">高</option>
+      <option value="medium">中</option>
+      <option value="low">低</option>
+    </select>
+  </div>
+  <div>
+    <label className="block text-sm font-semibold text-gray-800 mb-2">
+      緊急度
+      <span className="text-gray-500 ml-1 font-normal text-xs">（任意）</span>
+    </label>
+    <select value={urgency} onChange={(e) => setUrgency(e.target.value)}>
+      <option value="">未設定</option>
+      <option value="high">高</option>
+      <option value="medium">中</option>
+      <option value="low">低</option>
+    </select>
+  </div>
+</div>
+
+{/* 現在の領域表示 */}
+{importance && urgency && (
+  <div className="mt-2 p-3 bg-blue-50 rounded-lg text-sm text-gray-700">
+    <strong>現在の位置:</strong> {getQuadrantLabel(importance, urgency)}
+  </div>
+)}
+```
+
+**領域ラベル関数**:
+```typescript
+function getQuadrantLabel(importance: ImportanceLevel, urgency: UrgencyLevel): string {
+  if (importance === 'high' && urgency === 'high') return '第1領域（危機・最優先）';
+  if (importance === 'high' && urgency === 'low') return '第2領域（質・計画的対応）';
+  if (importance === 'low' && urgency === 'high') return '第3領域（錯覚・慎重に判断）';
+  if (importance === 'low' && urgency === 'low') return '第4領域（無駄・優先度低）';
+  return '中間領域';
+}
+```
+
+#### 課題一覧ページ（P-001）
+
+**テーブルカラム追加**:
+```
+| 項番 | 項目 | 問題点 | 重要度 | 緊急度 | 進捗ステータス | 対応者 | 期限 |
+```
+
+**フィルター追加**:
+- 重要度フィルター（全て/高/中/低/未設定）
+- 緊急度フィルター（全て/高/中/低/未設定）
+- 「第1領域のみ表示」ボタン（importance=high & urgency=high）
+
+#### ダッシュボード（P-000）
+
+**新規セクション: 重要度×緊急度マトリクス**:
+```tsx
+<Card className="bg-white rounded-xl shadow-sm p-6">
+  <h2 className="text-lg font-semibold text-gray-900 mb-4">
+    📊 重要度×緊急度マトリクス
+  </h2>
+
+  <div className="grid grid-cols-4 gap-2">
+    {/* ヘッダー行 */}
+    <div></div>
+    <div className="text-center font-bold text-sm">緊急度: 高</div>
+    <div className="text-center font-bold text-sm">緊急度: 中</div>
+    <div className="text-center font-bold text-sm">緊急度: 低</div>
+
+    {/* 重要度: 高 */}
+    <div className="font-bold text-sm">重要度: 高</div>
+    <MatrixCell importance="high" urgency="high" count={23} />
+    <MatrixCell importance="high" urgency="medium" count={15} />
+    <MatrixCell importance="high" urgency="low" count={8} />
+
+    {/* 重要度: 中 */}
+    <div className="font-bold text-sm">重要度: 中</div>
+    <MatrixCell importance="medium" urgency="high" count={12} />
+    <MatrixCell importance="medium" urgency="medium" count={34} />
+    <MatrixCell importance="medium" urgency="low" count={19} />
+
+    {/* 重要度: 低 */}
+    <div className="font-bold text-sm">重要度: 低</div>
+    <MatrixCell importance="low" urgency="high" count={5} />
+    <MatrixCell importance="low" urgency="medium" count={18} />
+    <MatrixCell importance="low" urgency="low" count={29} />
+  </div>
+
+  {/* 未設定課題数 */}
+  <div className="mt-4 text-sm text-gray-600">
+    未設定: {unsetCount}件
+  </div>
+</Card>
+```
+
+**MatrixCellコンポーネント**:
+```tsx
+function MatrixCell({ importance, urgency, count }: MatrixCellProps) {
+  const navigate = useNavigate();
+  const bgColor = getMatrixCellColor(importance, urgency);
+
+  return (
+    <button
+      onClick={() => navigate(`/tasks?importance=${importance}&urgency=${urgency}`)}
+      className={`p-4 rounded ${bgColor} hover:opacity-80 transition cursor-pointer`}
+    >
+      <div className="text-2xl font-bold">{count}</div>
+      <div className="text-xs">件</div>
+    </button>
+  );
+}
+
+function getMatrixCellColor(importance: ImportanceLevel, urgency: UrgencyLevel): string {
+  if (importance === 'high' && urgency === 'high') return 'bg-red-100 border-2 border-red-500';
+  if (importance === 'high' && urgency === 'low') return 'bg-green-100 border-2 border-green-500';
+  if (importance === 'low' && urgency === 'high') return 'bg-yellow-100 border-2 border-yellow-500';
+  if (importance === 'low' && urgency === 'low') return 'bg-gray-100 border-2 border-gray-300';
+  return 'bg-blue-50 border border-blue-200';
+}
+```
+
+### 10.5 実装の原則
+
+**最小性の原則**:
+- マトリクスはダッシュボードに統合（新規ページ作成しない）
+- importance, urgency は既存 tasks テーブルに追加（新規テーブル作成しない）
+- 既存UIに最小限の追加のみ
+
+**刹那性の原則**:
+- ドラッグ&ドロップ式マトリクス編集は不要（Phase 2以降で検討）
+- 163件の一括設定機能は不要（打ち合わせ中に個別設定すればよい）
+
+**実証性の原則**:
+- API実装後、統合テストで動作確認
+- フロントエンド実装後、E2Eテストで動作確認
+
+### 10.6 ユースケース
+
+**シナリオ1: 全体像把握**
+1. ダッシュボードでマトリクス図を確認
+2. 「第1領域（重要×緊急）が23件」と把握
+3. 第1領域のセルをクリック → 該当課題一覧へ遷移
+
+**シナリオ2: 個別課題の優先度設定**
+1. 課題詳細ページで「重要度: 高」「緊急度: 低」を選択
+2. システム表示「現在の位置: 第2領域（質・計画的対応）」
+3. 保存
+
+**シナリオ3: 優先課題の絞り込み**
+1. 課題一覧ページで「第1領域のみ表示」ボタンをクリック
+2. 23件に絞り込まれる
+3. タグ機能も併用して最終的に5件に絞り込み
+
+### 10.6 Phase 1 スコープ（年始打ち合わせまで）
+
+**実装する機能**:
+1. タグクラウド機能（基本版）
+2. コメント機能（1階層のみ）
+3. 重要度×緊急度マトリクス
+
+**実装しない機能（Phase 2以降）**:
+- スレッド型コメント（返信機能）
+- タグの階層化
+- コメント編集・削除UI
+- リアルタイム更新
+
+---
+
+### 10.7 実装完了
+
+**実装期間**: 2025-12-26（1日で完了）
+
+**実装内容**:
+
+1. **データベース・型定義** ✅
+   - タグ: tags, task_tags テーブル作成
+   - コメント: comments テーブル作成
+   - マトリクス: tasks に importance, urgency カラム追加
+   - Drizzleスキーマ更新完了
+   - 型定義追加（frontend/src/types/index.ts, api/types/index.ts）
+   - マイグレーション実行完了
+
+2. **バックエンドAPI** ✅（全8エンドポイント）
+   - タグAPI: GET /api/tags, POST /api/tasks/:id/tags, DELETE /api/tasks/:id/tags/:tagId
+   - コメントAPI: GET /api/tasks/:id/comments, POST /api/tasks/:id/comments
+   - マトリクスAPI: PUT /api/tasks/:id（拡張）, GET /api/tasks（フィルター拡張）, GET /api/dashboard/matrix
+   - 統合テスト完了
+
+3. **フロントエンド** ✅
+   - コンポーネント実装: TagInput.tsx, CommentSection.tsx
+   - P-002（課題詳細）拡張: タグ入力、コメント投稿・表示、重要度・緊急度選択
+   - P-001（課題一覧）拡張: タグバッジ、コメント件数、重要度・緊急度カラム、ソート機能
+   - バッジ表示: タグ（最大3個）、コメント数、重要度×緊急度
+
+4. **本番デプロイ** ✅
+   - フロントエンド: https://care-taskflow.vercel.app
+   - バックエンド: https://care-taskflow-api-877111301724.asia-northeast1.run.app
+   - 動作確認完了（2025-12-27）
 
 ---
 

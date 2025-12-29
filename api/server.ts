@@ -13,9 +13,23 @@ dotenv.config({ path: join(__dirname, '..', '.env.local') });
 const app = express();
 const PORT = process.env.PORT || 8432;
 
-// CORS設定
+// CORS設定（複数ドメイン対応）
+const allowedOrigins = [
+  'https://mdc-flow.net',
+  'https://www.mdc-flow.net',
+  'https://care-taskflow.vercel.app',
+  'http://localhost:3247',
+];
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3247',
+  origin: (origin, callback) => {
+    // originがundefinedの場合（同じオリジンからのリクエスト）も許可
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 

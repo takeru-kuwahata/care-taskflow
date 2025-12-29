@@ -1,6 +1,10 @@
 import {
   isTaskCategory,
   isTaskStatus,
+  IMPORTANCE_LEVELS,
+  URGENCY_LEVELS,
+  type ImportanceLevel,
+  type UrgencyLevel,
 } from '../types/index.js';
 
 /**
@@ -26,6 +30,26 @@ function isValidDateString(dateStr: string): boolean {
 
   const date = new Date(dateStr);
   return date instanceof Date && !isNaN(date.getTime());
+}
+
+/**
+ * 型ガード: ImportanceLevel
+ */
+function isImportanceLevel(value: unknown): value is ImportanceLevel {
+  if (typeof value !== 'string') {
+    return false;
+  }
+  return Object.values(IMPORTANCE_LEVELS).includes(value as ImportanceLevel);
+}
+
+/**
+ * 型ガード: UrgencyLevel
+ */
+function isUrgencyLevel(value: unknown): value is UrgencyLevel {
+  if (typeof value !== 'string') {
+    return false;
+  }
+  return Object.values(URGENCY_LEVELS).includes(value as UrgencyLevel);
 }
 
 /**
@@ -173,6 +197,16 @@ export function validateTaskCreateRequest(data: unknown): ValidationResult {
     }
   }
 
+  // Phase 12: importance
+  if (req.importance !== undefined && req.importance !== null && !isImportanceLevel(req.importance)) {
+    return { valid: false, message: 'importanceは"high", "medium", "low"のいずれかである必要があります' };
+  }
+
+  // Phase 12: urgency
+  if (req.urgency !== undefined && req.urgency !== null && !isUrgencyLevel(req.urgency)) {
+    return { valid: false, message: 'urgencyは"high", "medium", "low"のいずれかである必要があります' };
+  }
+
   return { valid: true };
 }
 
@@ -254,6 +288,16 @@ export function validateTaskUpdateRequest(data: unknown): ValidationResult {
     }
   }
 
+  // Phase 12: importance
+  if (req.importance !== undefined && req.importance !== null && !isImportanceLevel(req.importance)) {
+    return { valid: false, message: 'importanceは"high", "medium", "low"のいずれかである必要があります' };
+  }
+
+  // Phase 12: urgency
+  if (req.urgency !== undefined && req.urgency !== null && !isUrgencyLevel(req.urgency)) {
+    return { valid: false, message: 'urgencyは"high", "medium", "low"のいずれかである必要があります' };
+  }
+
   return { valid: true };
 }
 
@@ -289,6 +333,21 @@ export function validateTaskQueryParams(query: Record<string, unknown>): Validat
     if (query.sortOrder !== 'asc' && query.sortOrder !== 'desc') {
       return { valid: false, message: 'sortOrderは"asc"または"desc"である必要があります' };
     }
+  }
+
+  // Phase 12: importance filter
+  if (query.importance !== undefined && query.importance !== null && !isImportanceLevel(query.importance)) {
+    return { valid: false, message: 'importanceクエリパラメータは"high", "medium", "low"のいずれかである必要があります' };
+  }
+
+  // Phase 12: urgency filter
+  if (query.urgency !== undefined && query.urgency !== null && !isUrgencyLevel(query.urgency)) {
+    return { valid: false, message: 'urgencyクエリパラメータは"high", "medium", "low"のいずれかである必要があります' };
+  }
+
+  // Phase 12: tag filter
+  if (query.tag !== undefined && typeof query.tag !== 'string') {
+    return { valid: false, message: 'tagクエリパラメータは文字列である必要があります' };
   }
 
   return { valid: true };

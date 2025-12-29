@@ -85,17 +85,27 @@ export function sendNoContent(res: VercelResponse): void {
 }
 
 /**
- * CORSヘッダーを設定
+ * CORSヘッダーを設定（複数ドメイン対応）
  * @param res - Vercel Response オブジェクト
- * @param origin - 許可するオリジン（デフォルト: 環境変数CORS_ORIGIN）
+ * @param requestOrigin - リクエスト元のオリジン
  */
 export function setCorsHeaders(
   res: VercelResponse,
-  origin?: string
+  requestOrigin?: string
 ): void {
-  const allowedOrigin = origin || process.env.CORS_ORIGIN || 'http://localhost:3247';
+  const allowedOrigins = [
+    'https://mdc-flow.net',
+    'https://www.mdc-flow.net',
+    'https://care-taskflow.vercel.app',
+    'http://localhost:3247',
+  ];
 
-  res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+  // リクエストOriginが許可リストにあれば、そのOriginを返す
+  const originToAllow = requestOrigin && allowedOrigins.includes(requestOrigin)
+    ? requestOrigin
+    : allowedOrigins[0]; // デフォルトは最初のOrigin
+
+  res.setHeader('Access-Control-Allow-Origin', originToAllow);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');

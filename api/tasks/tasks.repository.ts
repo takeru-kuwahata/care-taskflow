@@ -1,6 +1,6 @@
 import { eq, and, desc, asc, count, sql, lt } from 'drizzle-orm';
 import { db } from '../db/index.js';
-import { tasks, causes, actions, assignees } from '../db/schema.js';
+import { tasks, causes, actions, assignees, tags, taskTags, comments } from '../db/schema.js';
 import {
   type Task,
   type Cause,
@@ -16,6 +16,8 @@ import {
   type AssigneeCreateRequest,
   type CategoryStat,
   type StatusStat,
+  type ImportanceLevel,
+  type UrgencyLevel,
   TASK_STATUSES,
 } from '../types/index.js';
 import { randomUUID } from 'crypto';
@@ -95,6 +97,9 @@ function mapTask(
     causes: taskCauses,
     actions: taskActions,
     assignees: taskAssignees,
+    // Phase 12: 重要度×緊急度マトリクス
+    importance: (dbTask.importance as ImportanceLevel) || undefined,
+    urgency: (dbTask.urgency as UrgencyLevel) || undefined,
   };
 }
 
@@ -109,7 +114,9 @@ export async function createTask(
   deadline?: string,
   relatedBusiness?: string,
   businessContent?: string,
-  organization?: string
+  organization?: string,
+  importance?: ImportanceLevel,
+  urgency?: UrgencyLevel
 ): Promise<Task> {
   const taskId = randomUUID();
   const now = new Date();
@@ -126,6 +133,9 @@ export async function createTask(
     createdBy: userId,
     createdAt: now,
     updatedAt: now,
+    // Phase 12: 重要度×緊急度マトリクス
+    importance: importance || null,
+    urgency: urgency || null,
   }).returning();
 
   return mapTask(newTask, [], [], []);
@@ -235,6 +245,15 @@ export async function findTasks(
     conditions.push(eq(tasks.status, filter.status));
   }
 
+  // Phase 12: 重要度×緊急度マトリクス
+  if (filter?.importance) {
+    conditions.push(eq(tasks.importance, filter.importance));
+  }
+
+  if (filter?.urgency) {
+    conditions.push(eq(tasks.urgency, filter.urgency));
+  }
+
   if (conditions.length > 0) {
     query = query.where(and(...conditions)) as typeof query;
   }
@@ -254,6 +273,12 @@ export async function findTasks(
         break;
       case 'category':
         query = query.orderBy(orderFunc(tasks.category)) as typeof query;
+        break;
+      case 'importance':
+        query = query.orderBy(orderFunc(tasks.importance)) as typeof query;
+        break;
+      case 'urgency':
+        query = query.orderBy(orderFunc(tasks.urgency)) as typeof query;
         break;
     }
   }
@@ -283,20 +308,44 @@ export async function findTasks(
   const tasksWithRelations: Task[] = [];
 
   for (const task of filteredTaskList) {
-    const [taskCauses, taskActions, taskAssignees] = await Promise.all([
+    const [taskCauses, taskActions, taskAssignees, taskTagsData, commentCountData] = await Promise.all([
       db.select().from(causes).where(eq(causes.taskId, task.id)),
       db.select().from(actions).where(eq(actions.taskId, task.id)),
       db.select().from(assignees).where(eq(assignees.taskId, task.id)),
+      // Phase 12: タグを取得
+      db
+        .select({
+          id: tags.id,
+          name: tags.name,
+          createdAt: tags.createdAt,
+        })
+        .from(taskTags)
+        .innerJoin(tags, eq(taskTags.tagId, tags.id))
+        .where(eq(taskTags.taskId, task.id)),
+      // Phase 12: コメント数を取得
+      db
+        .select({ count: count() })
+        .from(comments)
+        .where(eq(comments.taskId, task.id)),
     ]);
 
-    tasksWithRelations.push(
-      mapTask(
-        task,
-        taskCauses.map(mapCause),
-        taskActions.map(mapAction),
-        taskAssignees.map(mapAssignee)
-      )
+    const mappedTask = mapTask(
+      task,
+      taskCauses.map(mapCause),
+      taskActions.map(mapAction),
+      taskAssignees.map(mapAssignee)
     );
+
+    // Phase 12: タグとコメント数を追加
+    tasksWithRelations.push({
+      ...mappedTask,
+      tags: taskTagsData.map((t) => ({
+        id: t.id,
+        name: t.name,
+        createdAt: t.createdAt.toISOString(),
+      })),
+      commentCount: Number(commentCountData[0]?.count || 0),
+    });
   }
 
   return tasksWithRelations;
@@ -356,6 +405,8 @@ export async function updateTask(
     relatedBusiness?: string;
     businessContent?: string;
     organization?: string;
+    importance?: ImportanceLevel;
+    urgency?: UrgencyLevel;
   }
 ): Promise<Task | null> {
   const updateData: Partial<typeof tasks.$inferInsert> = {
@@ -369,6 +420,9 @@ export async function updateTask(
   if (updates.relatedBusiness !== undefined) updateData.relatedBusiness = updates.relatedBusiness;
   if (updates.businessContent !== undefined) updateData.businessContent = updates.businessContent;
   if (updates.organization !== undefined) updateData.organization = updates.organization;
+  // Phase 12: 重要度×緊急度マトリクス
+  if (updates.importance !== undefined) updateData.importance = updates.importance;
+  if (updates.urgency !== undefined) updateData.urgency = updates.urgency;
 
   const [updatedTask] = await db
     .update(tasks)
@@ -480,21 +534,93 @@ export async function getRecentTasks(limit: number = 5): Promise<Task[]> {
   const tasksWithRelations: Task[] = [];
 
   for (const task of recentTasksList) {
-    const [taskCauses, taskActions, taskAssignees] = await Promise.all([
+    const [taskCauses, taskActions, taskAssignees, taskTagsData, commentCountData] = await Promise.all([
       db.select().from(causes).where(eq(causes.taskId, task.id)),
       db.select().from(actions).where(eq(actions.taskId, task.id)),
       db.select().from(assignees).where(eq(assignees.taskId, task.id)),
+      // Phase 12: タグを取得
+      db
+        .select({
+          id: tags.id,
+          name: tags.name,
+          createdAt: tags.createdAt,
+        })
+        .from(taskTags)
+        .innerJoin(tags, eq(taskTags.tagId, tags.id))
+        .where(eq(taskTags.taskId, task.id)),
+      // Phase 12: コメント数を取得
+      db
+        .select({ count: count() })
+        .from(comments)
+        .where(eq(comments.taskId, task.id)),
     ]);
 
-    tasksWithRelations.push(
-      mapTask(
-        task,
-        taskCauses.map(mapCause),
-        taskActions.map(mapAction),
-        taskAssignees.map(mapAssignee)
-      )
+    const mappedTask = mapTask(
+      task,
+      taskCauses.map(mapCause),
+      taskActions.map(mapAction),
+      taskAssignees.map(mapAssignee)
     );
+
+    // Phase 12: タグとコメント数を追加
+    tasksWithRelations.push({
+      ...mappedTask,
+      tags: taskTagsData.map((t) => ({
+        id: t.id,
+        name: t.name,
+        createdAt: t.createdAt.toISOString(),
+      })),
+      commentCount: Number(commentCountData[0]?.count || 0),
+    });
   }
 
   return tasksWithRelations;
+}
+
+/**
+ * Phase 12: 重要度×緊急度マトリクスデータを取得
+ */
+export async function getMatrixData(): Promise<{
+  matrix: Array<{ importance: string; urgency: string; count: number }>;
+  unsetCount: number;
+  totalTasks: number;
+}> {
+  // 全タスク数を取得
+  const totalResult = await db.select({ count: count() }).from(tasks);
+  const totalTasks = Number(totalResult[0]?.count || 0);
+
+  // importanceとurgencyが両方設定されている課題をグループ化してカウント
+  const matrixResult = await db
+    .select({
+      importance: tasks.importance,
+      urgency: tasks.urgency,
+      count: count(),
+    })
+    .from(tasks)
+    .where(
+      and(
+        sql`${tasks.importance} IS NOT NULL`,
+        sql`${tasks.urgency} IS NOT NULL`
+      )
+    )
+    .groupBy(tasks.importance, tasks.urgency);
+
+  // 未設定（importanceまたはurgencyがnull）の課題数を取得
+  const unsetResult = await db
+    .select({ count: count() })
+    .from(tasks)
+    .where(
+      sql`${tasks.importance} IS NULL OR ${tasks.urgency} IS NULL`
+    );
+  const unsetCount = Number(unsetResult[0]?.count || 0);
+
+  return {
+    matrix: matrixResult.map(r => ({
+      importance: r.importance!,
+      urgency: r.urgency!,
+      count: Number(r.count),
+    })),
+    unsetCount,
+    totalTasks,
+  };
 }

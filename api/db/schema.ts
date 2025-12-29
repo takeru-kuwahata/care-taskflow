@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, serial } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, serial, primaryKey } from 'drizzle-orm/pg-core';
 
 /**
  * Drizzle ORM データベーススキーマ定義
@@ -31,6 +31,9 @@ export const tasks = pgTable('tasks', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   createdBy: text('created_by').notNull().references(() => users.id),
+  // Phase 12: 重要度×緊急度マトリクス
+  importance: text('importance'), // 'high' | 'medium' | 'low' | null
+  urgency: text('urgency'),       // 'high' | 'medium' | 'low' | null
 });
 
 /**
@@ -62,4 +65,36 @@ export const assignees = pgTable('assignees', {
   name: text('name').notNull(),
   organization: text('organization'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+/**
+ * Phase 12: タグテーブル
+ */
+export const tags = pgTable('tags', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull().unique(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+/**
+ * Phase 12: 課題-タグ中間テーブル（多対多）
+ */
+export const taskTags = pgTable('task_tags', {
+  taskId: text('task_id').notNull().references(() => tasks.id, { onDelete: 'cascade' }),
+  tagId: text('tag_id').notNull().references(() => tags.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+}, (table) => ({
+  pk: primaryKey({ columns: [table.taskId, table.tagId] }),
+}));
+
+/**
+ * Phase 12: コメントテーブル
+ */
+export const comments = pgTable('comments', {
+  id: text('id').primaryKey(),
+  taskId: text('task_id').notNull().references(() => tasks.id, { onDelete: 'cascade' }),
+  userId: text('user_id').notNull().references(() => users.id),
+  content: text('content').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });

@@ -7,16 +7,24 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MainLayout } from '@/layouts/MainLayout';
 import { useTaskDetail } from '@/hooks/useTaskDetail';
+import { TagInput } from '@/components/TagInput';
+import { CommentSection } from '@/components/CommentSection';
+import { addTagToTask, removeTagFromTask } from '@/lib/apiClient';
 import type {
   TaskCategory,
   TaskStatus,
   CauseCreateRequest,
   ActionCreateRequest,
   AssigneeCreateRequest,
+  Tag,
+  ImportanceLevel,
+  UrgencyLevel,
 } from '@/types';
 import {
   TASK_CATEGORY_LABELS,
   TASK_STATUS_LABELS,
+  IMPORTANCE_LABELS,
+  URGENCY_LABELS,
 } from '@/types';
 import { logger } from '@/lib/logger';
 
@@ -44,6 +52,13 @@ export const TaskDetail: React.FC = () => {
   // 削除確認モーダル
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+  // Phase 12: タグの状態管理
+  const [tags, setTags] = useState<Tag[]>([]);
+
+  // Phase 12: 重要度×緊急度マトリクスの状態管理
+  const [importance, setImportance] = useState<ImportanceLevel | ''>('');
+  const [urgency, setUrgency] = useState<UrgencyLevel | ''>('');
+
   // 編集モード時にデータをフォームに反映
   useEffect(() => {
     if (task) {
@@ -62,6 +77,11 @@ export const TaskDetail: React.FC = () => {
           ? task.assignees.map((a) => ({ name: a.name, organization: a.organization }))
           : [{ name: '', organization: '' }]
       );
+      // Phase 12: タグを反映
+      setTags(task.tags || []);
+      // Phase 12: 重要度×緊急度を反映
+      setImportance(task.importance || '');
+      setUrgency(task.urgency || '');
     }
   }, [task]);
 
@@ -120,6 +140,27 @@ export const TaskDetail: React.FC = () => {
     setAssignees(newAssignees);
   };
 
+  // Phase 12: タグの追加・削除ハンドラー
+  const handleAddTag = async (tagName: string) => {
+    if (!id) {
+      throw new Error('新規作成モードではタグを追加できません');
+    }
+
+    const { tag } = await addTagToTask(id, tagName);
+    setTags([...tags, tag]);
+    logger.debug('Tag added', { tagId: tag.id, tagName: tag.name });
+  };
+
+  const handleRemoveTag = async (tagId: string) => {
+    if (!id) {
+      throw new Error('新規作成モードではタグを削除できません');
+    }
+
+    await removeTagFromTask(id, tagId);
+    setTags(tags.filter((t) => t.id !== tagId));
+    logger.debug('Tag removed', { tagId });
+  };
+
   // 保存処理
   const handleSave = async () => {
     try {
@@ -166,6 +207,9 @@ export const TaskDetail: React.FC = () => {
           causes: causesData.length > 0 ? causesData : undefined,
           actions: actionsData.length > 0 ? actionsData : undefined,
           assignees: assigneesData.length > 0 ? assigneesData : undefined,
+          // Phase 12: 重要度×緊急度マトリクス
+          importance: importance || undefined,
+          urgency: urgency || undefined,
         });
 
         logger.info('Task created successfully');
@@ -183,6 +227,9 @@ export const TaskDetail: React.FC = () => {
           causes: causesData.length > 0 ? causesData : undefined,
           actions: actionsData.length > 0 ? actionsData : undefined,
           assignees: assigneesData.length > 0 ? assigneesData : undefined,
+          // Phase 12: 重要度×緊急度マトリクス
+          importance: importance || undefined,
+          urgency: urgency || undefined,
         });
 
         logger.info('Task updated successfully', { taskId: id });
@@ -467,6 +514,64 @@ export const TaskDetail: React.FC = () => {
                 className="w-full px-3 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-3 focus:ring-blue-100"
               />
             </div>
+
+            {/* Phase 12: タグ */}
+            {!isNewMode && (
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-gray-800 mb-2">
+                  タグ
+                  <span className="text-gray-500 ml-1 font-normal text-xs">（任意）</span>
+                </label>
+                <TagInput
+                  tags={tags}
+                  onAddTag={handleAddTag}
+                  onRemoveTag={handleRemoveTag}
+                />
+              </div>
+            )}
+
+            {/* Phase 12: 重要度×緊急度マトリクス */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              {/* 重要度 */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-800 mb-2">
+                  重要度
+                  <span className="text-gray-500 ml-1 font-normal text-xs">（任意）</span>
+                </label>
+                <select
+                  value={importance}
+                  onChange={(e) => setImportance(e.target.value as ImportanceLevel | '')}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-3 focus:ring-blue-100"
+                >
+                  <option value="">未設定</option>
+                  {Object.entries(IMPORTANCE_LABELS).map(([key, label]) => (
+                    <option key={key} value={key}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* 緊急度 */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-800 mb-2">
+                  緊急度
+                  <span className="text-gray-500 ml-1 font-normal text-xs">（任意）</span>
+                </label>
+                <select
+                  value={urgency}
+                  onChange={(e) => setUrgency(e.target.value as UrgencyLevel | '')}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-3 focus:ring-blue-100"
+                >
+                  <option value="">未設定</option>
+                  {Object.entries(URGENCY_LABELS).map(([key, label]) => (
+                    <option key={key} value={key}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
 
           {/* 詳細情報 Section */}
@@ -519,6 +624,16 @@ export const TaskDetail: React.FC = () => {
               />
             </div>
           </div>
+
+          {/* Phase 12: コメントセクション */}
+          {!isNewMode && (
+            <div className="mt-8">
+              <h2 className="text-lg font-semibold text-gray-800 mb-5 pb-3 border-b-2 border-blue-50">
+                コメント・対話
+              </h2>
+              <CommentSection taskId={id!} />
+            </div>
+          )}
         </div>
 
         {/* Action Buttons */}

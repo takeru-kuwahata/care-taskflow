@@ -292,27 +292,29 @@ inject_knowledge ツールで keyword: "@E2Eテストオーケストレーター
 
 ## デプロイ設定
 ```yaml
-デプロイ日: 2025-12-26
+デプロイ日: 2025-12-26（初回）、2025-12-27（独自ドメイン設定）
 構成: A（お試しデプロイ：開発DBを本番で共用）
 
 本番環境URL:
-  フロントエンド: https://care-taskflow.vercel.app
+  メインURL（独自ドメイン）: https://mdc-flow.net → https://www.mdc-flow.net
+  フロントエンド（Vercel）: https://care-taskflow.vercel.app
   バックエンド: https://care-taskflow-api-877111301724.asia-northeast1.run.app
 
 インフラ:
   frontend:
     プラットフォーム: Vercel
     プロジェクト名: care-taskflow
+    独自ドメイン: mdc-flow.net（お名前.com）
     環境変数:
       - VITE_API_BASE_URL: https://care-taskflow-api-877111301724.asia-northeast1.run.app
-  
+
   backend:
     プラットフォーム: Google Cloud Run
     プロジェクトID: care-taskflow
     サービス名: care-taskflow-api
     リージョン: asia-northeast1
     環境変数:
-      - CORS_ORIGIN: https://care-taskflow.vercel.app
+      - CORS_ORIGIN: 複数オリジン対応（mdc-flow.net, www.mdc-flow.net, care-taskflow.vercel.app, localhost）
       - DATABASE_URL: [開発環境と同じNeon PostgreSQL]
       - JWT_SECRET: [.env.localより]
       - CLERK_SECRET_KEY: [.env.localより]
@@ -321,6 +323,14 @@ inject_knowledge ツールで keyword: "@E2Eテストオーケストレーター
     プロバイダ: Neon PostgreSQL
     環境: 開発と本番で共用（構成A）
     接続文字列: [.env.local参照]
+
+  dns:
+    プロバイダ: お名前.com
+    ドメイン: mdc-flow.net
+    DNS設定:
+      - Aレコード: mdc-flow.net → 76.76.21.21（Vercel）
+      - CNAMEレコード: www.mdc-flow.net → cname.vercel-dns.com
+    SSL証明書: Vercel自動発行（Let's Encrypt）
 
 デプロイスクリプト:
   本番: scripts/deploy-production.sh

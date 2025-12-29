@@ -48,7 +48,8 @@ async function handleGetDashboardStats(_req: AuthenticatedRequest, res: VercelRe
 
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   // CORSヘッダー設定
-  setCorsHeaders(res);
+  const requestOrigin = req.headers.origin as string | undefined;
+  setCorsHeaders(res, requestOrigin);
 
   // OPTIONSリクエストの処理
   if (req.method === 'OPTIONS') {

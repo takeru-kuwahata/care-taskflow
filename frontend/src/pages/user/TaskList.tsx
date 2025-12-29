@@ -7,10 +7,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '@/layouts/MainLayout';
 import { useTaskListData } from '@/hooks/useTaskListData';
+import { MessageCircle, Tag } from 'lucide-react';
 import {
   TASK_CATEGORY_LABELS,
   TASK_STATUSES,
   TASK_STATUS_LABELS,
+  IMPORTANCE_LABELS,
+  URGENCY_LABELS,
   type TaskCategory,
   type TaskStatus,
   type Task,
@@ -26,7 +29,7 @@ export const TaskListPage: React.FC = () => {
   const [selectedAssignee, setSelectedAssignee] = useState<string>('');
 
   // ソート状態
-  type SortKey = 'taskNumber' | 'deadline' | 'status' | null;
+  type SortKey = 'taskNumber' | 'deadline' | 'status' | 'importance' | 'urgency' | null;
   type SortOrder = 'asc' | 'desc';
   const [sortKey, setSortKey] = useState<SortKey>(null);
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
@@ -267,6 +270,32 @@ export const TaskListPage: React.FC = () => {
                       問題点
                     </th>
                     <th
+                      onClick={() => handleSort('importance')}
+                      className="px-5 py-4 text-left text-sm font-semibold text-gray-900 w-24 cursor-pointer hover:bg-blue-100 transition-colors select-none"
+                    >
+                      <span className="flex items-center gap-1">
+                        重要度
+                        {sortKey === 'importance' && (
+                          <span className="text-blue-600">
+                            {sortOrder === 'asc' ? '↑' : '↓'}
+                          </span>
+                        )}
+                      </span>
+                    </th>
+                    <th
+                      onClick={() => handleSort('urgency')}
+                      className="px-5 py-4 text-left text-sm font-semibold text-gray-900 w-24 cursor-pointer hover:bg-blue-100 transition-colors select-none"
+                    >
+                      <span className="flex items-center gap-1">
+                        緊急度
+                        {sortKey === 'urgency' && (
+                          <span className="text-blue-600">
+                            {sortOrder === 'asc' ? '↑' : '↓'}
+                          </span>
+                        )}
+                      </span>
+                    </th>
+                    <th
                       onClick={() => handleSort('status')}
                       className="px-5 py-4 text-left text-sm font-semibold text-gray-900 w-36 cursor-pointer hover:bg-blue-100 transition-colors select-none"
                     >
@@ -312,8 +341,62 @@ export const TaskListPage: React.FC = () => {
                           {TASK_CATEGORY_LABELS[task.category]}
                         </span>
                       </td>
-                      <td className="px-5 py-4 text-sm text-gray-900 max-w-md truncate">
-                        {task.problem}
+                      <td className="px-5 py-4 text-sm text-gray-900 max-w-md">
+                        <div className="space-y-2">
+                          <div className="truncate">{task.problem}</div>
+                          {/* Phase 12: バッジ表示 */}
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {/* タグバッジ */}
+                            {task.tags && task.tags.length > 0 && (
+                              <div className="flex items-center gap-1">
+                                <Tag className="h-3 w-3 text-gray-400" />
+                                {task.tags.slice(0, 3).map((tag) => (
+                                  <span key={tag.id} className="inline-block bg-gray-200 text-gray-700 rounded text-xs px-1.5 py-0.5">
+                                    {tag.name}
+                                  </span>
+                                ))}
+                                {task.tags.length > 3 && (
+                                  <span className="text-xs text-gray-500">+{task.tags.length - 3}</span>
+                                )}
+                              </div>
+                            )}
+
+                            {/* コメント数バッジ */}
+                            {task.commentCount !== undefined && task.commentCount > 0 && (
+                              <span className="inline-flex items-center gap-1 border border-gray-300 rounded text-xs px-1.5 py-0.5">
+                                <MessageCircle className="h-3 w-3" />
+                                {task.commentCount}
+                              </span>
+                            )}
+
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-5 py-4 text-sm text-gray-900">
+                        {task.importance ? (
+                          <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                            task.importance === 'high' ? 'bg-red-100 text-red-700' :
+                            task.importance === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                            'bg-gray-100 text-gray-700'
+                          }`}>
+                            {IMPORTANCE_LABELS[task.importance]}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 text-xs">未設定</span>
+                        )}
+                      </td>
+                      <td className="px-5 py-4 text-sm text-gray-900">
+                        {task.urgency ? (
+                          <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                            task.urgency === 'high' ? 'bg-red-100 text-red-700' :
+                            task.urgency === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                            'bg-gray-100 text-gray-700'
+                          }`}>
+                            {URGENCY_LABELS[task.urgency]}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 text-xs">未設定</span>
+                        )}
                       </td>
                       <td className="px-5 py-4">
                         <span

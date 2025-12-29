@@ -30,7 +30,9 @@ export async function createTaskWithRelations(
     data.deadline,
     data.relatedBusiness,
     data.businessContent,
-    data.organization
+    data.organization,
+    data.importance,
+    data.urgency
   );
 
   // 原因を作成
@@ -106,6 +108,9 @@ export async function updateTaskWithRelations(
   if (data.relatedBusiness !== undefined) taskUpdates.relatedBusiness = data.relatedBusiness;
   if (data.businessContent !== undefined) taskUpdates.businessContent = data.businessContent;
   if (data.organization !== undefined) taskUpdates.organization = data.organization;
+  // Phase 12: 重要度×緊急度マトリクス
+  if (data.importance !== undefined) taskUpdates.importance = data.importance;
+  if (data.urgency !== undefined) taskUpdates.urgency = data.urgency;
 
   // 課題本体を更新
   if (Object.keys(taskUpdates).length > 0) {

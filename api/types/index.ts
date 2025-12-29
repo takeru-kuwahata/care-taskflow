@@ -94,6 +94,14 @@ export interface Task {
   causes: Cause[];
   actions: Action[];
   assignees: Assignee[];
+  // Phase 12: タグクラウド機能
+  tags?: Tag[];
+  // Phase 12: コメント機能
+  comments?: Comment[];
+  commentCount?: number; // 一覧表示用
+  // Phase 12: 重要度×緊急度マトリクス
+  importance?: ImportanceLevel;
+  urgency?: UrgencyLevel;
 }
 
 // ============================================
@@ -124,11 +132,16 @@ export interface TaskFilter {
   category?: TaskCategory;
   status?: TaskStatus;
   assignee?: string;
+  // Phase 12: タグクラウド機能
+  tag?: string;
+  // Phase 12: 重要度×緊急度マトリクス
+  importance?: ImportanceLevel;
+  urgency?: UrgencyLevel;
 }
 
 // ソート条件型
 export interface TaskSort {
-  sortBy?: 'taskNumber' | 'deadline' | 'status' | 'category';
+  sortBy?: 'taskNumber' | 'deadline' | 'status' | 'category' | 'importance' | 'urgency';
   sortOrder?: 'asc' | 'desc';
 }
 
@@ -194,6 +207,9 @@ export interface TaskCreateRequest {
   causes?: CauseCreateRequest[];
   actions?: ActionCreateRequest[];
   assignees?: AssigneeCreateRequest[];
+  // Phase 12: 重要度×緊急度マトリクス
+  importance?: ImportanceLevel;
+  urgency?: UrgencyLevel;
 }
 
 // 課題更新リクエスト型
@@ -208,6 +224,9 @@ export interface TaskUpdateRequest {
   causes?: CauseCreateRequest[];
   actions?: ActionCreateRequest[];
   assignees?: AssigneeCreateRequest[];
+  // Phase 12: 重要度×緊急度マトリクス
+  importance?: ImportanceLevel;
+  urgency?: UrgencyLevel;
 }
 
 // ============================================
@@ -291,4 +310,93 @@ export interface DashboardStatsResponse {
   categoryStats: CategoryStat[];
   statusStats: StatusStat[];
   recentTasks: Task[];
+}
+
+// ============================================
+// Phase 12: タグクラウド機能
+// ============================================
+
+// タグ型
+export interface Tag {
+  id: string;
+  name: string;
+  createdAt: string;
+}
+
+// タグ作成リクエスト型
+export interface TagCreateRequest {
+  name: string;
+}
+
+// ============================================
+// Phase 12: コメント機能
+// ============================================
+
+// コメント型
+export interface Comment {
+  id: string;
+  taskId: string;
+  userId: string;
+  userName?: string; // ユーザー名（JOIN結果）
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// コメント作成リクエスト型
+export interface CommentCreateRequest {
+  content: string;
+}
+
+// コメント更新リクエスト型
+export interface CommentUpdateRequest {
+  content: string;
+}
+
+// ============================================
+// Phase 12: 重要度×緊急度マトリクス
+// ============================================
+
+// 重要度定数
+export const IMPORTANCE_LEVELS = {
+  HIGH: 'high',
+  MEDIUM: 'medium',
+  LOW: 'low',
+} as const;
+
+export type ImportanceLevel = typeof IMPORTANCE_LEVELS[keyof typeof IMPORTANCE_LEVELS];
+
+export const IMPORTANCE_LABELS: Record<ImportanceLevel, string> = {
+  [IMPORTANCE_LEVELS.HIGH]: '高',
+  [IMPORTANCE_LEVELS.MEDIUM]: '中',
+  [IMPORTANCE_LEVELS.LOW]: '低',
+};
+
+// 緊急度定数
+export const URGENCY_LEVELS = {
+  HIGH: 'high',
+  MEDIUM: 'medium',
+  LOW: 'low',
+} as const;
+
+export type UrgencyLevel = typeof URGENCY_LEVELS[keyof typeof URGENCY_LEVELS];
+
+export const URGENCY_LABELS: Record<UrgencyLevel, string> = {
+  [URGENCY_LEVELS.HIGH]: '高',
+  [URGENCY_LEVELS.MEDIUM]: '中',
+  [URGENCY_LEVELS.LOW]: '低',
+};
+
+// マトリクスセル型
+export interface MatrixCell {
+  importance: ImportanceLevel;
+  urgency: UrgencyLevel;
+  count: number;
+}
+
+// マトリクスレスポンス型
+export interface MatrixResponse {
+  matrix: MatrixCell[];
+  unsetCount: number;
+  totalTasks: number;
 }

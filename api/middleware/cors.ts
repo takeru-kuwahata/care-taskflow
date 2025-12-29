@@ -12,8 +12,9 @@ import { setCorsHeaders } from '../utils/response.js';
  * @returns OPTIONSリクエストの場合はtrue（早期リターン）、それ以外はfalse
  */
 export function handleCors(req: VercelRequest, res: VercelResponse): boolean {
-  // CORSヘッダーを設定
-  setCorsHeaders(res);
+  // リクエストのOriginヘッダーを取得してCORSヘッダーを設定
+  const requestOrigin = req.headers.origin as string | undefined;
+  setCorsHeaders(res, requestOrigin);
 
   // プリフライトリクエスト（OPTIONS）の処理
   if (req.method === 'OPTIONS') {

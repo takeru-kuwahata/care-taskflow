@@ -37,8 +37,18 @@ export function generateToken(payload: JWTPayload): string {
 export function verifyToken(token: string): JWTPayload | null {
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
+    console.log('[JWT] Token verified successfully', {
+      userId: decoded.userId,
+      email: decoded.email,
+    });
     return decoded;
   } catch (error) {
+    console.error('[JWT] Token verification failed', {
+      error: error instanceof Error ? error.message : String(error),
+      errorName: error instanceof Error ? error.name : 'Unknown',
+      tokenPrefix: token.substring(0, 20),
+      secretUsed: JWT_SECRET.substring(0, 10) + '...',
+    });
     return null;
   }
 }

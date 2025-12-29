@@ -12,11 +12,21 @@ export const LoginPage: React.FC = () => {
 
   // 認証エラーメッセージを取得（401リダイレクト時）
   useEffect(() => {
+    // セッションエラーメッセージを取得
     const savedError = sessionStorage.getItem('auth_error');
     if (savedError) {
       setAuthError(savedError);
       // 一度表示したらクリア
       sessionStorage.removeItem('auth_error');
+    }
+
+    // ログインページにアクセスしたら、念のため古いトークンをクリア
+    // （無効なトークンが残っている可能性があるため）
+    const existingToken = localStorage.getItem('auth_token');
+    if (existingToken) {
+      console.log('[Login] Clearing existing token on login page access');
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user');
     }
   }, []);
 

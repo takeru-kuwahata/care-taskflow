@@ -66,19 +66,29 @@ export class ApiClient {
 
         // 401エラー（認証エラー）の場合、ログインページにリダイレクト
         if (response.status === 401) {
-          logger.warn('認証エラー検出: ログインページにリダイレクトします');
-          // トークンをクリア
-          localStorage.removeItem('auth_token');
-          localStorage.removeItem('user');
+          logger.warn('認証エラー検出: ログインページにリダイレクトします', {
+            currentPath: window.location.pathname,
+            hasToken: !!localStorage.getItem('auth_token'),
+          });
 
-          // ユーザーに通知（リダイレクト前に表示）
+          // エラーメッセージ
           const errorMessage = errorData.message || '認証の有効期限が切れました。再度ログインしてください。';
 
           // セッションストレージにエラーメッセージを保存（ログインページで表示用）
           sessionStorage.setItem('auth_error', errorMessage);
 
-          // ログインページにリダイレクト
-          window.location.href = '/login';
+          // トークンをクリア（リダイレクト前に必ず実行）
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('user');
+
+          // ログインページにリダイレクト（同期的に実行）
+          // すでにログインページにいる場合はリダイレクトしない（無限ループ防止）
+          if (window.location.pathname !== '/login') {
+            logger.warn('Redirecting to login page...');
+            window.location.replace('/login');
+          }
+
+          // エラーを投げる（処理を中断）
           throw new Error(errorMessage);
         }
 

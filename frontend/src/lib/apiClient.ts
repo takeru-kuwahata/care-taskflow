@@ -64,6 +64,17 @@ export class ApiClient {
           error: errorData,
         });
 
+        // 401エラー（認証エラー）の場合、ログインページにリダイレクト
+        if (response.status === 401) {
+          logger.warn('認証エラー検出: ログインページにリダイレクトします');
+          // トークンをクリア
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('user');
+          // ログインページにリダイレクト
+          window.location.href = '/login';
+          throw new Error('認証が必要です。ログインページにリダイレクトします。');
+        }
+
         throw new Error(errorData.message || `HTTP Error: ${response.status}`);
       }
 
@@ -119,3 +130,58 @@ export class ApiClient {
 
 // デフォルトインスタンス
 export const apiClient = new ApiClient();
+
+// ============================================
+// Phase 12: タグクラウド機能 API
+// ============================================
+
+/**
+ * 全タグを取得
+ */
+export async function getAllTags(searchQuery?: string): Promise<{ tags: import('@/types').Tag[] }> {
+  const endpoint = searchQuery ? `/api/tags?q=${encodeURIComponent(searchQuery)}` : '/api/tags';
+  return apiClient.get(endpoint);
+}
+
+/**
+ * 課題にタグを追加
+ */
+export async function addTagToTask(taskId: string, tagName: string): Promise<{ tag: import('@/types').Tag }> {
+  return apiClient.post(`/api/tasks/${taskId}/tags`, { name: tagName });
+}
+
+/**
+ * 課題からタグを削除
+ */
+export async function removeTagFromTask(taskId: string, tagId: string): Promise<void> {
+  return apiClient.delete(`/api/tasks/${taskId}/tags/${tagId}`);
+}
+
+// ============================================
+// Phase 12: コメント機能 API
+// ============================================
+
+/**
+ * 課題のコメント一覧を取得
+ */
+export async function getTaskComments(taskId: string): Promise<{ comments: import('@/types').Comment[] }> {
+  return apiClient.get(`/api/tasks/${taskId}/comments`);
+}
+
+/**
+ * 課題にコメントを投稿
+ */
+export async function createComment(taskId: string, content: string): Promise<{ comment: import('@/types').Comment }> {
+  return apiClient.post(`/api/tasks/${taskId}/comments`, { content });
+}
+
+// ============================================
+// Phase 12: 重要度×緊急度マトリクス API
+// ============================================
+
+/**
+ * マトリクスデータを取得
+ */
+export async function getMatrixData(): Promise<import('@/types').MatrixResponse> {
+  return apiClient.get('/api/dashboard/matrix');
+}

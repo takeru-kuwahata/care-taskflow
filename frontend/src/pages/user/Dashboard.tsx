@@ -40,6 +40,14 @@ export const DashboardPage: React.FC = () => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    // 認証チェック
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      // トークンがない場合はログインページにリダイレクト
+      navigate('/login', { replace: true });
+      return;
+    }
+
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -54,7 +62,7 @@ export const DashboardPage: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [navigate]);
 
   if (loading) {
     return (

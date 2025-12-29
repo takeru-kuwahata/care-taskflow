@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { PublicLayout } from '@/layouts/PublicLayout';
 import { useLogin } from '@/hooks/useLogin';
@@ -8,6 +8,17 @@ export const LoginPage: React.FC = () => {
   const { loading, error, login } = useLogin();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  // 認証エラーメッセージを取得（401リダイレクト時）
+  useEffect(() => {
+    const savedError = sessionStorage.getItem('auth_error');
+    if (savedError) {
+      setAuthError(savedError);
+      // 一度表示したらクリア
+      sessionStorage.removeItem('auth_error');
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +46,15 @@ export const LoginPage: React.FC = () => {
           医療的ケア児支援課題管理システム
         </p>
 
+        {/* 認証エラー（401リダイレクト時） */}
+        {authError && (
+          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md text-yellow-800 text-sm">
+            <strong>⚠️ セッションが切れました</strong>
+            <p className="mt-1">{authError}</p>
+          </div>
+        )}
+
+        {/* ログインエラー */}
         {error && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
             {error.message}

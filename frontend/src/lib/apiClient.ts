@@ -70,9 +70,16 @@ export class ApiClient {
           // トークンをクリア
           localStorage.removeItem('auth_token');
           localStorage.removeItem('user');
+
+          // ユーザーに通知（リダイレクト前に表示）
+          const errorMessage = errorData.message || '認証の有効期限が切れました。再度ログインしてください。';
+
+          // セッションストレージにエラーメッセージを保存（ログインページで表示用）
+          sessionStorage.setItem('auth_error', errorMessage);
+
           // ログインページにリダイレクト
           window.location.href = '/login';
-          throw new Error('認証が必要です。ログインページにリダイレクトします。');
+          throw new Error(errorMessage);
         }
 
         throw new Error(errorData.message || `HTTP Error: ${response.status}`);

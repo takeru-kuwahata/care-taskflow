@@ -35,9 +35,23 @@ export async function authenticate(
   req: AuthenticatedRequest,
   res: VercelResponse
 ): Promise<boolean> {
-  const token = extractTokenFromHeader(req.headers.authorization);
+  const authHeader = req.headers.authorization;
+
+  // 詳細なログ出力（デバッグ用）
+  console.log('[Auth] Authentication attempt', {
+    path: req.url,
+    method: req.method,
+    hasAuthHeader: !!authHeader,
+    authHeaderPrefix: authHeader?.substring(0, 20) || 'none',
+  });
+
+  const token = extractTokenFromHeader(authHeader);
 
   if (!token) {
+    console.warn('[Auth] No token found in request', {
+      path: req.url,
+      authHeader: authHeader?.substring(0, 50) || 'none',
+    });
     sendUnauthorized(res, '認証トークンが必要です');
     return false;
   }
@@ -45,6 +59,10 @@ export async function authenticate(
   const payload = verifyToken(token);
 
   if (!payload) {
+    console.warn('[Auth] Invalid token', {
+      path: req.url,
+      tokenPrefix: token.substring(0, 20),
+    });
     sendUnauthorized(res, '無効な認証トークンです');
     return false;
   }
@@ -54,6 +72,12 @@ export async function authenticate(
     userId: payload.userId,
     email: payload.email,
   };
+
+  console.log('[Auth] Authentication successful', {
+    path: req.url,
+    userId: payload.userId,
+    email: payload.email,
+  });
 
   return true;
 }

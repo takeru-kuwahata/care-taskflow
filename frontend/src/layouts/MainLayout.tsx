@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { ReactNode } from 'react';
 
 interface MainLayoutProps {
@@ -6,7 +7,17 @@ interface MainLayoutProps {
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    // トークンとユーザー情報をクリア
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user');
+    // ログインページにリダイレクト
+    navigate('/login');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -36,8 +47,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
               ケアTaskFlow
             </h1>
           </div>
-          <div className="flex items-center gap-2">
-            <button className="p-2 hover:bg-gray-100 rounded-lg">
+          <div className="flex items-center gap-2 relative">
+            <button
+              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+              className="p-2 hover:bg-gray-100 rounded-lg"
+            >
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -52,6 +66,31 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                 />
               </svg>
             </button>
+
+            {/* ユーザーメニュードロップダウン */}
+            {isUserMenuOpen && (
+              <div className="absolute right-0 top-12 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                <button
+                  onClick={handleLogout}
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 text-gray-700 flex items-center gap-2"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
+                  <span>ログアウト</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </header>

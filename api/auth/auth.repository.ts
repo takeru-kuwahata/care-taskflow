@@ -91,3 +91,21 @@ export async function createUser(
     updatedAt: result[0].updatedAt.toISOString(),
   };
 }
+
+/**
+ * ユーザーのパスワードを更新
+ * @param userId - ユーザーID
+ * @param newPasswordHash - 新しいハッシュ化されたパスワード
+ */
+export async function updateUserPassword(
+  userId: string,
+  newPasswordHash: string
+): Promise<void> {
+  await db
+    .update(users)
+    .set({
+      passwordHash: newPasswordHash,
+      updatedAt: new Date(),
+    })
+    .where(eq(users.id, userId));
+}

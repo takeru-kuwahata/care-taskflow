@@ -98,6 +98,7 @@ const createVercelHandler = async (modulePath: string) => {
   app.post('/api/auth/signup', await createVercelHandler('./auth/signup.js'));
   app.post('/api/auth/login', await createVercelHandler('./auth/login.js'));
   app.post('/api/auth/logout', await createVercelHandler('./auth/logout.js'));
+  app.post('/api/auth/change-password', await createVercelHandler('./auth/change-password.js'));
 
   // 課題管理エンドポイント
   app.post('/api/tasks', await createVercelHandler('./tasks/index.js'));

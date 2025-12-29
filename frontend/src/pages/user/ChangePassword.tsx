@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiClient } from '../../lib/apiClient';
+import { MainLayout } from '../../layouts/MainLayout';
 
 export const ChangePassword: React.FC = () => {
   const navigate = useNavigate();
@@ -58,7 +59,8 @@ export const ChangePassword: React.FC = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto">
+    <MainLayout>
+      <div className="max-w-md mx-auto">
       <div className="bg-white rounded-lg shadow-md p-6">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">パスワード変更</h1>
 
@@ -135,5 +137,6 @@ export const ChangePassword: React.FC = () => {
         </form>
       </div>
     </div>
+    </MainLayout>
   );
 };

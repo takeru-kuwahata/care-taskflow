@@ -1,0 +1,6 @@
+# Vercelビルドから除外するディレクトリ
+api/
+docs/
+.git/
+*.md
+vercel.json.backup

@@ -64,15 +64,24 @@ export class ApiClient {
           error: errorData,
         });
 
-        // 401エラー（認証エラー）の場合、ログインページにリダイレクト
+        // 401エラー（認証エラー）の場合
         if (response.status === 401) {
+          // ログインエンドポイントへの401は、通常のログイン失敗（メールアドレス・パスワード間違い等）
+          // この場合はバックエンドのエラーメッセージをそのまま使用し、リダイレクトしない
+          if (endpoint === '/api/auth/login') {
+            const errorMessage = errorData.error || errorData.message || 'ログインに失敗しました';
+            throw new Error(errorMessage);
+          }
+
+          // その他のエンドポイントへの401は、トークン切れや認証が必要な操作
+          // この場合はログインページにリダイレクト
           logger.warn('認証エラー検出: ログインページにリダイレクトします', {
             currentPath: window.location.pathname,
             hasToken: !!localStorage.getItem('auth_token'),
           });
 
           // エラーメッセージ
-          const errorMessage = errorData.message || '認証の有効期限が切れました。再度ログインしてください。';
+          const errorMessage = errorData.error || errorData.message || '認証の有効期限が切れました。再度ログインしてください。';
 
           // セッションストレージにエラーメッセージを保存（ログインページで表示用）
           sessionStorage.setItem('auth_error', errorMessage);
@@ -92,7 +101,7 @@ export class ApiClient {
           throw new Error(errorMessage);
         }
 
-        throw new Error(errorData.message || `HTTP Error: ${response.status}`);
+        throw new Error(errorData.error || errorData.message || `HTTP Error: ${response.status}`);
       }
 
       // 204 No Contentの場合

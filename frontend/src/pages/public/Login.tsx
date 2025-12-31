@@ -18,13 +18,9 @@ export const LoginPage: React.FC = () => {
       setAuthError(savedError);
       // 一度表示したらクリア
       sessionStorage.removeItem('auth_error');
-    }
 
-    // ログインページにアクセスしたら、念のため古いトークンをクリア
-    // （無効なトークンが残っている可能性があるため）
-    const existingToken = localStorage.getItem('auth_token');
-    if (existingToken) {
-      console.log('[Login] Clearing existing token on login page access');
+      // 401エラーでリダイレクトされた場合のみトークンをクリア
+      console.log('[Login] Clearing token due to auth error');
       localStorage.removeItem('auth_token');
       localStorage.removeItem('user');
     }

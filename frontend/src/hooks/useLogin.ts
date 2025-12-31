@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './useAuth';
 import { authService } from '@/services/AuthService';
 import type { LoginCredentials } from '@/types';
 import { logger } from '@/lib/logger';
@@ -8,6 +9,7 @@ export const useLogin = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const navigate = useNavigate();
+  const { login: authLogin } = useAuth();
 
   const login = async (credentials: LoginCredentials) => {
     try {
@@ -15,13 +17,10 @@ export const useLogin = () => {
       setError(null);
       logger.debug('Login hook: Starting login', { email: credentials.email });
 
-      const result = await authService.login(credentials);
+      // AuthContextのloginを使用（これがトークン保存とuser状態更新を行う）
+      await authLogin(credentials);
 
-      // トークンをローカルストレージに保存
-      localStorage.setItem('auth_token', result.token);
-      localStorage.setItem('user', JSON.stringify(result.user));
-
-      logger.info('Login hook: Login successful', { userId: result.user.id });
+      logger.info('Login hook: Login successful');
 
       // 課題一覧ページへリダイレクト
       navigate('/tasks');

@@ -290,6 +290,21 @@ inject_knowledge ツールで keyword: "@E2Eテストオーケストレーター
 
 **設定ファイル終了**
 
+## 🚨 重要：ログイン問題が発生した場合
+
+**ログインできない問題が報告された場合、まず以下を実行してください：**
+
+1. `docs/LOGIN_ISSUE_PREVENTION.md` を必ず読む
+2. 環境変数を確認: `cd frontend && vercel env ls | grep VITE_API_BASE_URL`
+3. E2Eテストを実行: `npx playwright test e2e/test-kuwahata-login.spec.ts`
+4. ドキュメントのトラブルシューティング手順に従う
+
+**過去の修正履歴**:
+- 2025-12-31: 環境変数未設定、トークン削除、AuthContext統合の問題を修正
+- 詳細は `docs/LOGIN_ISSUE_PREVENTION.md` 参照
+
+---
+
 ## デプロイ設定
 ```yaml
 デプロイ日: 2025-12-26（初回）、2025-12-27（独自ドメイン設定）

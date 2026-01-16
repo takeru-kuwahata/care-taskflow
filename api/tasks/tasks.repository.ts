@@ -210,18 +210,41 @@ export async function findTaskById(taskId: string): Promise<Task | null> {
 
   if (!task) return null;
 
-  const [taskCauses, taskActions, taskAssignees] = await Promise.all([
+  const [taskCauses, taskActions, taskAssignees, taskComments, taskTagRelations] = await Promise.all([
     db.select().from(causes).where(eq(causes.taskId, taskId)),
     db.select().from(actions).where(eq(actions.taskId, taskId)),
     db.select().from(assignees).where(eq(assignees.taskId, taskId)),
+    db.select().from(comments).where(eq(comments.taskId, taskId)).orderBy(desc(comments.createdAt)),
+    db.select().from(taskTags).leftJoin(tags, eq(taskTags.tagId, tags.id)).where(eq(taskTags.taskId, taskId)),
   ]);
 
-  return mapTask(
-    task,
-    taskCauses.map(mapCause),
-    taskActions.map(mapAction),
-    taskAssignees.map(mapAssignee)
-  );
+  const taskTagsList = taskTagRelations
+    .filter((rel) => rel.tags !== null)
+    .map((rel) => ({
+      id: rel.tags!.id,
+      name: rel.tags!.name,
+      createdAt: rel.tags!.createdAt.toISOString(),
+    }));
+
+  const taskCommentsList = taskComments.map((comment) => ({
+    id: comment.id,
+    taskId: comment.taskId,
+    userId: comment.userId,
+    content: comment.content,
+    createdAt: comment.createdAt.toISOString(),
+    updatedAt: comment.updatedAt.toISOString(),
+  }));
+
+  return {
+    ...mapTask(
+      task,
+      taskCauses.map(mapCause),
+      taskActions.map(mapAction),
+      taskAssignees.map(mapAssignee)
+    ),
+    tags: taskTagsList,
+    comments: taskCommentsList,
+  };
 }
 
 /**

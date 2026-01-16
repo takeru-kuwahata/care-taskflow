@@ -85,6 +85,7 @@ async function importAllTasks() {
   let skippedCount = 0;
   let lastCategory: string | null = null; // 直前のカテゴリを保持
   let lastProblem: string | null = null; // 直前の問題点を保持
+  let lastComment: string | null = null; // 直前のコメントを保持（セル結合対策）
 
   for (const row of dataRows) {
     try {
@@ -181,12 +182,19 @@ async function importAllTasks() {
         }
       }
 
-      // コメントを作成
+      // コメントを作成（セル結合対策：直前と同じコメントはスキップ）
       if (comment && comment.trim()) {
-        await client.query(`
-          INSERT INTO comments (id, task_id, user_id, content, created_at, updated_at)
-          VALUES ($1, $2, $3, $4, NOW(), NOW())
-        `, [uuidv4(), taskId, systemUserId, comment.trim()]);
+        const trimmedComment = comment.trim();
+        if (trimmedComment !== lastComment) {
+          await client.query(`
+            INSERT INTO comments (id, task_id, user_id, content, created_at, updated_at)
+            VALUES ($1, $2, $3, $4, NOW(), NOW())
+          `, [uuidv4(), taskId, systemUserId, trimmedComment]);
+          lastComment = trimmedComment;
+        }
+      } else {
+        // コメントが空の場合は、lastCommentをリセット
+        lastComment = null;
       }
 
       importedCount++;

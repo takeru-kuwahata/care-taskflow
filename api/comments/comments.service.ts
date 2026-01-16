@@ -1,4 +1,4 @@
-import * as commentsRepository from './comments.repository';
+import * as commentsRepository from './comments.repository.js';
 
 /**
  * コメントサービス

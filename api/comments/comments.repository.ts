@@ -1,5 +1,5 @@
-import { db } from '../db/index';
-import { comments, users } from '../db/schema';
+import { db } from '../db/index.js';
+import { comments, users } from '../db/schema.js';
 import { eq, desc } from 'drizzle-orm';
 import { v4 as uuidv4 } from 'uuid';
 

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 
 test('本番環境でログインできるか確認', async ({ page }) => {
   // 本番環境のログインページにアクセス

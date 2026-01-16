@@ -1,6 +1,6 @@
 import { test, expect, chromium, firefox, webkit } from '@playwright/test';
 
-const testLogin = async (browserType: any, browserName: string) => {
+const testLogin = async (browserType: typeof chromium | typeof firefox | typeof webkit, browserName: string) => {
   const browser = await browserType.launch();
   const context = await browser.newContext();
   const page = await context.newPage();

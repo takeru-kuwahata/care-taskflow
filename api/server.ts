@@ -118,6 +118,16 @@ const createVercelHandler = async (modulePath: string) => {
     await handler(req, res);
   });
 
+  // コメントエンドポイント
+  app.get('/api/tasks/:id/comments', async (req, res) => {
+    const handler = await createVercelHandler('./tasks/[id]/comments/index.js');
+    await handler(req, res);
+  });
+  app.post('/api/tasks/:id/comments', async (req, res) => {
+    const handler = await createVercelHandler('./tasks/[id]/comments/index.js');
+    await handler(req, res);
+  });
+
   // ダッシュボードエンドポイント
   app.get('/api/dashboard/stats', await createVercelHandler('./dashboard/stats.js'));
 

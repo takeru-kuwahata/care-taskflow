@@ -252,19 +252,16 @@ export const TaskListPage: React.FC = () => {
                   <tr>
                     <th
                       onClick={() => handleSort('taskNumber')}
-                      className="px-5 py-4 text-left text-sm font-semibold text-gray-900 w-20 cursor-pointer hover:bg-blue-100 transition-colors select-none"
+                      className="px-5 py-4 text-left text-sm font-semibold text-gray-900 w-48 cursor-pointer hover:bg-blue-100 transition-colors select-none"
                     >
                       <span className="flex items-center gap-1">
-                        項番
+                        項番・項目
                         {sortKey === 'taskNumber' && (
                           <span className="text-blue-600">
                             {sortOrder === 'asc' ? '↑' : '↓'}
                           </span>
                         )}
                       </span>
-                    </th>
-                    <th className="px-5 py-4 text-left text-sm font-semibold text-gray-900 w-44">
-                      項目
                     </th>
                     <th className="px-5 py-4 text-left text-sm font-semibold text-gray-900">
                       問題点
@@ -333,17 +330,37 @@ export const TaskListPage: React.FC = () => {
                       onClick={() => handleRowClick(task)}
                       className="border-b border-gray-100 hover:bg-blue-50 cursor-pointer transition-colors"
                     >
-                      <td className="px-5 py-4 text-sm font-semibold text-blue-600">
-                        {String(task.taskNumber).padStart(3, '0')}
-                      </td>
                       <td className="px-5 py-4">
-                        <span className="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-medium">
-                          {TASK_CATEGORY_LABELS[task.category]}
-                        </span>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-sm font-semibold text-blue-600 whitespace-nowrap">
+                            {String(task.taskNumber).padStart(3, '0')}
+                          </span>
+                          <span className="inline-block px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-xs font-medium whitespace-nowrap">
+                            {TASK_CATEGORY_LABELS[task.category]}
+                          </span>
+                        </div>
                       </td>
-                      <td className="px-5 py-4 text-sm text-gray-900 max-w-md">
-                        <div className="space-y-2">
-                          <div className="truncate">{task.problem}</div>
+                      <td className="px-5 py-4 text-sm text-gray-900">
+                        <div className="space-y-1">
+                          <div className="text-sm leading-relaxed font-medium">
+                            {task.problem}
+                          </div>
+                          {/* 詳細情報（原因・対応案・コメントの最初の50文字） */}
+                          <div className="text-xs text-gray-500 leading-relaxed">
+                            {(() => {
+                              const details = [];
+                              if (task.causes && task.causes.length > 0 && task.causes[0].cause) {
+                                details.push(`原因: ${task.causes[0].cause.substring(0, 50)}${task.causes[0].cause.length > 50 ? '...' : ''}`);
+                              }
+                              if (task.actions && task.actions.length > 0 && task.actions[0].action) {
+                                details.push(`対応案: ${task.actions[0].action.substring(0, 50)}${task.actions[0].action.length > 50 ? '...' : ''}`);
+                              }
+                              if (task.comments && task.comments.length > 0 && task.comments[0].content) {
+                                details.push(`コメント: ${task.comments[0].content.substring(0, 50)}${task.comments[0].content.length > 50 ? '...' : ''}`);
+                              }
+                              return details.length > 0 ? details[0] : '';
+                            })()}
+                          </div>
                           {/* Phase 12: バッジ表示 */}
                           <div className="flex items-center gap-2 flex-wrap">
                             {/* タグバッジ */}

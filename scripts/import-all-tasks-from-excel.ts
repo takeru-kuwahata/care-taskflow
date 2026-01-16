@@ -85,7 +85,7 @@ async function importAllTasks() {
   let skippedCount = 0;
   let lastCategory: string | null = null; // 直前のカテゴリを保持
   let lastProblem: string | null = null; // 直前の問題点を保持
-  let lastComment: string | null = null; // 直前のコメントを保持（セル結合対策）
+  let lastComment: string | null = null; // 直前のコメントを保持（セル結合されたコメントを継承）
 
   for (const row of dataRows) {
     try {
@@ -107,7 +107,14 @@ async function importAllTasks() {
       const problem = lastProblem || `課題${taskNumber}`; // 列3: ②問題点（継承または課題X）
       const urgency = row[4]; // 列4: 緊急度
       const importance = row[5]; // 列5: 重要度
-      const comment = row[7]; // 列7 (Excel I列): コメント
+      const commentRaw = row[7]; // 列7 (Excel I列): コメント
+
+      // コメントがある場合は更新、ない場合は直前のコメントを継承（セル結合対策）
+      if (commentRaw && commentRaw.trim()) {
+        lastComment = commentRaw.trim();
+      }
+      const comment = lastComment;
+
       const cause = row[8]; // 列8 (Excel J列): ③原因
       const action = row[9]; // 列9 (Excel K列): ④対応案
       const progress = row[10]; // 列10 (Excel L列): ⑤進捗
@@ -182,19 +189,12 @@ async function importAllTasks() {
         }
       }
 
-      // コメントを作成（セル結合対策：直前と同じコメントはスキップ）
+      // コメントを作成
       if (comment && comment.trim()) {
-        const trimmedComment = comment.trim();
-        if (trimmedComment !== lastComment) {
-          await client.query(`
-            INSERT INTO comments (id, task_id, user_id, content, created_at, updated_at)
-            VALUES ($1, $2, $3, $4, NOW(), NOW())
-          `, [uuidv4(), taskId, systemUserId, trimmedComment]);
-          lastComment = trimmedComment;
-        }
-      } else {
-        // コメントが空の場合は、lastCommentをリセット
-        lastComment = null;
+        await client.query(`
+          INSERT INTO comments (id, task_id, user_id, content, created_at, updated_at)
+          VALUES ($1, $2, $3, $4, NOW(), NOW())
+        `, [uuidv4(), taskId, systemUserId, comment.trim()]);
       }
 
       importedCount++;

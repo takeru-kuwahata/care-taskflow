@@ -209,22 +209,24 @@ export const DashboardPage: React.FC = () => {
                 <div
                   key={task.id}
                   onClick={() => navigate(`/tasks/${task.id}`)}
-                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors"
+                  className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors"
                 >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm font-semibold text-blue-600">
-                        {String(task.taskNumber).padStart(3, '0')}
-                      </span>
-                      <span className="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-medium">
-                        {TASK_CATEGORY_LABELS[task.category]}
-                      </span>
-                    </div>
-                    <div className="space-y-1 mt-1">
+                  {/* 課題番号 + カテゴリ */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-blue-600">
+                      {String(task.taskNumber).padStart(3, '0')}
+                    </span>
+                    <span className="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-medium">
+                      {TASK_CATEGORY_LABELS[task.category]}
+                    </span>
+                  </div>
+
+                  {/* 問題点 + 詳細 */}
+                  <div className="flex-1 min-w-0">
+                    <div className="space-y-1">
                       <div className="text-sm leading-relaxed font-medium">
                         {task.problem}
                       </div>
-                      {/* 詳細情報（原因・対応案・コメントの最初の50文字） */}
                       <div className="text-xs text-gray-500 leading-relaxed">
                         {(() => {
                           const details = [];
@@ -242,7 +244,39 @@ export const DashboardPage: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  <div>
+
+                  {/* 重要度 */}
+                  <div className="flex-shrink-0">
+                    {task.importance ? (
+                      <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                        task.importance === 'high' ? 'bg-red-100 text-red-700' :
+                        task.importance === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-gray-100 text-gray-700'
+                      }`}>
+                        {task.importance === 'high' ? '高' : task.importance === 'medium' ? '中' : '低'}
+                      </span>
+                    ) : (
+                      <span className="text-gray-400 text-xs">-</span>
+                    )}
+                  </div>
+
+                  {/* 緊急度 */}
+                  <div className="flex-shrink-0">
+                    {task.urgency ? (
+                      <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                        task.urgency === 'high' ? 'bg-red-100 text-red-700' :
+                        task.urgency === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-gray-100 text-gray-700'
+                      }`}>
+                        {task.urgency === 'high' ? '高' : task.urgency === 'medium' ? '中' : '低'}
+                      </span>
+                    ) : (
+                      <span className="text-gray-400 text-xs">-</span>
+                    )}
+                  </div>
+
+                  {/* ステータス */}
+                  <div className="flex-shrink-0">
                     <span
                       className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium ${
                         task.status === TASK_STATUSES.NOT_STARTED

@@ -220,7 +220,27 @@ export const DashboardPage: React.FC = () => {
                         {TASK_CATEGORY_LABELS[task.category]}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-900 mt-1 truncate max-w-2xl">{task.problem}</p>
+                    <div className="space-y-1 mt-1">
+                      <div className="text-sm leading-relaxed font-medium">
+                        {task.problem}
+                      </div>
+                      {/* 詳細情報（原因・対応案・コメントの最初の50文字） */}
+                      <div className="text-xs text-gray-500 leading-relaxed">
+                        {(() => {
+                          const details = [];
+                          if (task.causes && task.causes.length > 0 && task.causes[0].cause) {
+                            details.push(`原因: ${task.causes[0].cause.substring(0, 50)}${task.causes[0].cause.length > 50 ? '...' : ''}`);
+                          }
+                          if (task.actions && task.actions.length > 0 && task.actions[0].action) {
+                            details.push(`対応案: ${task.actions[0].action.substring(0, 50)}${task.actions[0].action.length > 50 ? '...' : ''}`);
+                          }
+                          if (task.comments && task.comments.length > 0 && task.comments[0].content) {
+                            details.push(`コメント: ${task.comments[0].content.substring(0, 50)}${task.comments[0].content.length > 50 ? '...' : ''}`);
+                          }
+                          return details.length > 0 ? details[0] : '';
+                        })()}
+                      </div>
+                    </div>
                   </div>
                   <div>
                     <span
